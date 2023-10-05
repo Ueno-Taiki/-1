@@ -46,6 +46,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//長押しカウント
 	int count = 0;
 
+	//曲の時間
+	int time_count = 8800;
+
 	//背景画像
 	int bg1X = 0, bg2X = 1280;
 	int bg_speed = 4;
@@ -61,6 +64,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	bool L_push = false;
 	bool S_push = false;
 	bool isEnemyAlive = true;
+	bool Clearflag = false;
 
 	//画像切り替え
 	enum Scene {
@@ -83,6 +87,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	int Haikei = Novice::LoadTexture("./Resources/Haikei.png");
 	int Ready = Novice::LoadTexture("./Resources/UI/Ready.png");
 	int Start = Novice::LoadTexture("./Resources/UI/Start.png");
+	int Clear = Novice::LoadTexture("./Resources/UI/Clear.png");
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -118,6 +123,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//難易度簡単
 
 			if (Stage_Easyflag) {
+				time_count--;
+
 				if (!Novice::IsPlayingAudio(voiceHandle1) || voiceHandle1 == -1) {
 					voiceHandle1 = Novice::PlayAudio(soundHandle1, true, 0.5f);
 				}
@@ -177,6 +184,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				if (bg2X < -1270 && bg1X < 0) {
 					bg2X = 1270;
 				}
+
+				//曲が終わったら終了させる
+				if (time_count < 0) {
+					Gameflag = false;
+					Clearflag = true;
+				}
 			}
 			break;
 		case eScene_STAGE_NORMAL:
@@ -197,7 +210,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		case eScene_STAGE_EASY:
 			Novice::DrawSprite(bg1X, 0, Haikei, 1, 1, 0.0f, WHITE);
 			Novice::DrawSprite(bg2X, 0, Haikei, 1, 1, 0.0f, WHITE);
-			Novice::ScreenPrintf(0, 0, "Count = %d", count);
+			Novice::ScreenPrintf(0, 0, "TimeCount = %d", time_count);
 			Novice::DrawLine(100, 180, 1200, 180, WHITE);
 			Novice::DrawLine(100, 360, 1200, 360, WHITE);
 			Novice::DrawLine(100, 540, 1200, 540, WHITE);
@@ -210,6 +223,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				if (AnimCount == 1) {
 					Novice::DrawSprite(260, 180, Start, 1, 1, 0.0f, WHITE);
 				}
+			}
+			if(Clearflag) {
+				Novice::DrawSprite(260, 180, Clear, 1, 1, 0.0f, WHITE);
 			}
 			break;
 		case eScene_STAGE_NORMAL:
