@@ -1,4 +1,5 @@
 #include <Novice.h>
+#include <math.h>
 
 const char kWindowTitle[] = "ゲームタイトル";
 
