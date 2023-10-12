@@ -31,10 +31,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		float radius;
 		float speed;
 	};
+
+	const int ENEMY_NUM = 100;
+
 	//初期値設定
 	Ball ball = {
 		{100.0f, 250.0f, 64.0f, 64.0f},
-		64.0f,
+		32.0f,
 		180.0f
 	};
 	Enemy enemy{
@@ -42,6 +45,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		32.0f,
 		3.0f
 	};
+
+
+	//カウントキャラクター
+	float pos_x = 1200.0f, pos_y = 580.0f;
 
 	//長押しカウント
 	int count = 0;
@@ -64,7 +71,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	bool L_push = false;  //長押しフラグ
 	bool S_push = false;  //短押しフラグ
 	bool isEnemyAlive = true;  //敵生存フラグ
-	bool attackflag = false;  //攻撃フラグ
 	bool Clearflag = false;  //クリアフラグ
 
 	//画像切り替え
@@ -79,7 +85,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Scene scene_no = eScene_STAGE_EASY;
 
 	//BGM・SE
-	int soundHandle1 = Novice::LoadAudio("./Resources/SE/BGM1.mp3");  //BGM1
+	int soundHandle1 = Novice::LoadAudio("./Resources/BGM/BGM1.mp3");  //BGM1
 	int voiceHandle1 = -1;
 
 	//画像読み込み
@@ -88,6 +94,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	int Haikei = Novice::LoadTexture("./Resources/Haikei.png");
 	int Ready = Novice::LoadTexture("./Resources/UI/Ready.png");
 	int Start = Novice::LoadTexture("./Resources/UI/Start.png");
+	int Count = Novice::LoadTexture("./Resources/UI/Count.png");
 	int Clear = Novice::LoadTexture("./Resources/UI/Clear.png");
 
 	// ウィンドウの×ボタンが押されるまでループ
@@ -102,7 +109,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 
 		//マウスカーソル削除
-		Novice::SetMouseCursorVisibility(0);
+		//Novice::SetMouseCursorVisibility(0);
 
 		switch (scene_no) {
 		case eScene_START:
@@ -128,6 +135,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//難易度簡単
 
 			if (Stage_Easyflag) {
+				
 				time_count--;
 
 				if (!Novice::IsPlayingAudio(voiceHandle1) || voiceHandle1 == -1) {
@@ -149,14 +157,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					L_push = true;
 				}
 
-				if (preKeys[DIK_SPACE] && !keys[DIK_SPACE]) {  //スペースを長押しない時に攻撃
+				if (preKeys[DIK_SPACE] && !keys[DIK_SPACE] && onceflag == true && count <= 20) {  //スペースを長押しない時に攻撃
 					onceflag = false;
 					count = 0;
 					S_push = true;
-					attackflag = true;
 				}
 				else{
-					attackflag = false;
+					S_push = false;
 				}
 
 				if (L_push == true) {  //長押し判定
@@ -181,14 +188,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 				//敵の当たり判定
 
-				if (attackflag) {
-					if (isEnemyAlive) {
-						if ((ball.radius + enemy.radius) * (ball.radius + enemy.radius) > ((ball.position.x - 18) - (enemy.position.x + 18)) * ((ball.position.x - 18) - (enemy.position.x + 18)) + ((ball.position.y - 18) - (enemy.position.y + 18)) + ((ball.position.y - 18) - (enemy.position.y + 18))) {
-							if (isEnemyAlive == true) {
-								isEnemyAlive = false;
+				for (int i = 1; i < ENEMY_NUM; i++) {
+					if (S_push) {
+						if (isEnemyAlive) {
+							if ((ball.radius + enemy.radius) * (ball.radius + enemy.radius) > ((ball.position.x - 18) - (enemy.position.x + 18)) * ((ball.position.x - 18) - (enemy.position.x + 18)) + ((ball.position.y - 18) - (enemy.position.y + 18)) + ((ball.position.y - 18) - (enemy.position.y + 18))) {
+								if (isEnemyAlive == true) {
+									isEnemyAlive = false;
+								}
 							}
 						}
 					}
+				}
+
+				//カウントダウン
+				if (time_count > 0) {
+					pos_x -= 0.18f;
 				}
 
 				//画像スクロール
@@ -203,9 +217,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				}
 
 				//曲が終わったら終了させる
+				
+				if (time_count < 50) {
+					Novice::StopAudio(voiceHandle1);
+				}
 
 				if (time_count < 0) {
-					Novice::StopAudio(voiceHandle1);  
 					time_count = 0;
 					Stage_Easyflag = false;
 					Clearflag = true;
@@ -234,8 +251,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Novice::DrawLine(100, 180, 1200, 180, WHITE);
 			Novice::DrawLine(100, 360, 1200, 360, WHITE);
 			Novice::DrawLine(100, 540, 1200, 540, WHITE);
+			Novice::DrawSprite(0, 650, Count, 1, 1, 0.0f, WHITE);
+			Novice::DrawSprite((int)pos_x, (int)pos_y, Ebi, 1, 1, 0.0f, WHITE);
 			Novice::DrawSprite(int(ball.position.x), int(ball.position.y), Ebi, 1, 1, 0.0f, WHITE);
-			Novice::DrawSprite(int(enemy.position.x), int(enemy.position.y), Ika, 1, 1, 0.0f, WHITE);
+			for (int i = 1; i < ENEMY_NUM; i++) {
+				if (isEnemyAlive) {
+					Novice::DrawSprite(int(enemy.position.x), int(enemy.position.y), Ika, 1, 1, 0.0f, WHITE);
+				}
+			}
 			if (Gameflag) {
 				if (AnimCount == 0) {
 					Novice::DrawSprite(260, 180, Ready, 1, 1, 0.0f, WHITE);
