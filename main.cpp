@@ -58,14 +58,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	int AnimCount = 0;
 
 	//フラグ管理
-	bool Gameflag = true;
-	bool Stage_Easyflag = false;
-	bool onceflag = false;
-	bool L_push = false;
-	bool S_push = false;
-	bool isEnemyAlive = true;
-	bool attackflag = false;
-	bool Clearflag = false;
+	bool Gameflag = true;  //ゲームスタート用フラグ
+	bool Stage_Easyflag = false;  //難易度EASYフラグ
+	bool onceflag = false;  //押されたか用フラグ
+	bool L_push = false;  //長押しフラグ
+	bool S_push = false;  //短押しフラグ
+	bool isEnemyAlive = true;  //敵生存フラグ
+	bool attackflag = false;  //攻撃フラグ
+	bool Clearflag = false;  //クリアフラグ
 
 	//画像切り替え
 	enum Scene {
