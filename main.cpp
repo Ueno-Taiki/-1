@@ -39,7 +39,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	};
 	Enemy enemy{
 		{1000.0f, 270.0f, 64.0f, 64.0f},
-		64.0f,
+		32.0f,
 		3.0f
 	};
 
@@ -47,7 +47,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	int count = 0;
 
 	//曲の時間
-	int time_count = 8000;
+	int time_count = 6700;
 
 	//背景画像
 	int bg1X = 0, bg2X = 1280;
@@ -64,6 +64,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	bool L_push = false;
 	bool S_push = false;
 	bool isEnemyAlive = true;
+	bool attackflag = false;
 	bool Clearflag = false;
 
 	//画像切り替え
@@ -130,7 +131,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				time_count--;
 
 				if (!Novice::IsPlayingAudio(voiceHandle1) || voiceHandle1 == -1) {
-					voiceHandle1 = Novice::PlayAudio(soundHandle1, true, 0.5f);
+					voiceHandle1 = Novice::PlayAudio(soundHandle1, false, 0.5f);
 				}
 
 				//移動
@@ -152,6 +153,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					onceflag = false;
 					count = 0;
 					S_push = true;
+					attackflag = true;
+				}
+				else{
+					attackflag = false;
 				}
 
 				if (L_push == true) {  //長押し判定
@@ -176,7 +181,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 				//敵の当たり判定
 
-
+				if (attackflag) {
+					if (isEnemyAlive) {
+						if ((ball.radius + enemy.radius) * (ball.radius + enemy.radius) > ((ball.position.x - 18) - (enemy.position.x + 18)) * ((ball.position.x - 18) - (enemy.position.x + 18)) + ((ball.position.y - 18) - (enemy.position.y + 18)) + ((ball.position.y - 18) - (enemy.position.y + 18))) {
+							if (isEnemyAlive == true) {
+								isEnemyAlive = false;
+							}
+						}
+					}
+				}
 
 				//画像スクロール
 
@@ -190,8 +203,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				}
 
 				//曲が終わったら終了させる
+
 				if (time_count < 0) {
-					Novice::StopAudio(voiceHandle1);
+					Novice::StopAudio(voiceHandle1);  
 					time_count = 0;
 					Stage_Easyflag = false;
 					Clearflag = true;
