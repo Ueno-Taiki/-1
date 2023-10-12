@@ -47,7 +47,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	int count = 0;
 
 	//曲の時間
-	int time_count = 8800;
+	int time_count = 8000;
 
 	//背景画像
 	int bg1X = 0, bg2X = 1280;
@@ -99,6 +99,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Novice::GetHitKeyStateAll(keys);
 
 		/// ↓更新処理ここから
+
+		//マウスカーソル削除
+		Novice::SetMouseCursorVisibility(0);
+
 		switch (scene_no) {
 		case eScene_START:
 			break;
@@ -187,7 +191,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 				//曲が終わったら終了させる
 				if (time_count < 0) {
-					Gameflag = false;
+					Novice::StopAudio(voiceHandle1);
+					time_count = 0;
+					Stage_Easyflag = false;
 					Clearflag = true;
 				}
 			}
