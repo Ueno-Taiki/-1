@@ -32,8 +32,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		float speed;
 	};
 
-	const int ENEMY_NUM = 100;
-
 	//初期値設定
 	Ball ball = {
 		{100.0f, 250.0f, 64.0f, 64.0f},
@@ -85,8 +83,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Scene scene_no = eScene_STAGE_EASY;
 
 	//BGM・SE
-	int soundHandle1 = Novice::LoadAudio("./Resources/BGM/BGM1.mp3");  //BGM1
+	int BGM1 = Novice::LoadAudio("./Resources/BGM/BGM1.mp3");  
+	int Kill = Novice::LoadAudio("./Resources/SE/Kill.mp3");
 	int voiceHandle1 = -1;
+	int voiceHandle2 = -1;
 
 	//画像読み込み
 	int Ebi = Novice::LoadTexture("./Resources/ebi.png");
@@ -139,7 +139,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				time_count--;
 
 				if (!Novice::IsPlayingAudio(voiceHandle1) || voiceHandle1 == -1) {
-					voiceHandle1 = Novice::PlayAudio(soundHandle1, false, 0.5f);
+					voiceHandle1 = Novice::PlayAudio(BGM1, false, 0.5f);
 				}
 
 				//移動
@@ -188,13 +188,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 				//敵の当たり判定
 
-				for (int i = 1; i < ENEMY_NUM; i++) {
-					if (S_push) {
-						if (isEnemyAlive) {
-							if ((ball.radius + enemy.radius) * (ball.radius + enemy.radius) > ((ball.position.x - 18) - (enemy.position.x + 18)) * ((ball.position.x - 18) - (enemy.position.x + 18)) + ((ball.position.y - 18) - (enemy.position.y + 18)) + ((ball.position.y - 18) - (enemy.position.y + 18))) {
-								if (isEnemyAlive == true) {
-									isEnemyAlive = false;
+				if (S_push) {
+					if (isEnemyAlive) {
+						if ((ball.radius + enemy.radius) * (ball.radius + enemy.radius) > ((ball.position.x - 18) - (enemy.position.x + 18)) * ((ball.position.x - 18) - (enemy.position.x + 18)) + ((ball.position.y - 18) - (enemy.position.y + 18)) + ((ball.position.y - 18) - (enemy.position.y + 18))) {
+							if (isEnemyAlive == true) {
+								if (!Novice::IsPlayingAudio(voiceHandle2) || voiceHandle2 == -1) {
+									voiceHandle2 = Novice::PlayAudio(Kill, false, 20.0f);
 								}
+								isEnemyAlive = false;
 							}
 						}
 					}
@@ -254,10 +255,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Novice::DrawSprite(0, 650, Count, 1, 1, 0.0f, WHITE);
 			Novice::DrawSprite((int)pos_x, (int)pos_y, Ebi, 1, 1, 0.0f, WHITE);
 			Novice::DrawSprite(int(ball.position.x), int(ball.position.y), Ebi, 1, 1, 0.0f, WHITE);
-			for (int i = 1; i < ENEMY_NUM; i++) {
-				if (isEnemyAlive) {
-					Novice::DrawSprite(int(enemy.position.x), int(enemy.position.y), Ika, 1, 1, 0.0f, WHITE);
-				}
+			if (isEnemyAlive) {
+				Novice::DrawSprite(int(enemy.position.x), int(enemy.position.y), Ika, 1, 1, 0.0f, WHITE);
 			}
 			if (Gameflag) {
 				if (AnimCount == 0) {
