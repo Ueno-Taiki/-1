@@ -104,8 +104,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//画像読み込み
 	int Ebi = Novice::LoadTexture("./Resources/ebi.png");
 	int Ika = Novice::LoadTexture("./Resources/ika.png");
+	int Maguro = Novice::LoadTexture("./Resources/maguro.png");
 	int Start = Novice::LoadTexture("./Resources/Start.png");
-	int Haikei = Novice::LoadTexture("./Resources/Haikei.png");
+	int Haikei = Novice::LoadTexture("./Resources/Haikei1.png");
 	int Clear = Novice::LoadTexture("./Resources/Clear.png");
 	int ReadyUI = Novice::LoadTexture("./Resources/UI/Ready.png");
 	int StartUI = Novice::LoadTexture("./Resources/UI/Start.png");
@@ -601,7 +602,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Novice::DrawSprite((int)pos_x, (int)pos_y, Ebi, 1, 1, 0.0f, WHITE);
 			Novice::DrawSprite(int(ball.position.x), int(ball.position.y), Ebi, 1, 1, 0.0f, WHITE);
 			if (isEnemyAlive) {
-				Novice::DrawSprite(int(enemy.position.x), int(enemy.position.y), Ika, 1, 1, 0.0f, WHITE);
+				Novice::DrawSprite(int(enemy.position.x), int(enemy.position.y), Maguro, 1, 1, 0.0f, WHITE);
 			}
 			if (Gameflag) {
 				if (AnimCount == 0) {
