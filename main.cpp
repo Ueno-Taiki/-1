@@ -65,8 +65,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//フラグ管理
 	bool Gameflag = true;  //ゲームスタート用フラグ
 	bool Stage_Easyflag = false;  //難易度EASYフラグ
+	bool Stage_Easy_Clearflag = false;  //難易度EASYクリアフラグ
 	bool Stage_Normalflag = false;  //難易度NORMALフラグ
+	bool Stage_Normal_Clearflag = false;  //難易度Normalクリアフラグ
 	bool Stage_Hardflag = false;  //難易度HARDフラグ
+	bool Stage_Hard_Clearflag = false;  //難易度Hardクリアフラグ
 	bool onceflag = false;  //押されたか用フラグ
 	bool L_push = false;  //長押しフラグ
 	bool S_push = false;  //短押しフラグ
@@ -124,7 +127,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		case eScene_START:
 
 			if (!Novice::IsPlayingAudio(voiceHandle1) || voiceHandle1 == -1) {
-				voiceHandle1 = Novice::PlayAudio(GameStart, false, 0.5f);
+				voiceHandle1 = Novice::PlayAudio(GameStart, true, 0.5f);
 			}
 
 			if (keys[DIK_RETURN] && !preKeys[DIK_RETURN]) {  //ENTER押したとき
@@ -250,6 +253,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					time_count = 0;
 					Stage_Easyflag = false;
 					Clearflag = true;
+					Stage_Easy_Clearflag = true;
 					scene_no = eScene_CLEAR;
 				}
 			}
@@ -368,6 +372,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				if (time_count < 0) {
 					time_count = 0;
 					Stage_Normalflag = false;
+					Stage_Normal_Clearflag = true;
 					Clearflag = true;
 					scene_no = eScene_CLEAR;
 				}
@@ -375,13 +380,132 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			break;
 		case eScene_STAGE_HARD:
+			//マウスカーソル削除
+
+			Novice::SetMouseCursorVisibility(0);
+
+			//ゲームスタートアニメーション
+
+			if (Gameflag) {
+				frameCount++;
+				time_count = 6700;
+				if (frameCount == 60) {
+					AnimCount += 1;
+				}
+				if (frameCount == 120) {
+					AnimCount = 0;
+					Gameflag = false;
+					Stage_Hardflag = true;
+				}
+			}
+
+			//難易度難しい
+
+			if (Stage_Hardflag) {
+
+				time_count--;
+
+				if (!Novice::IsPlayingAudio(voiceHandle4) || voiceHandle4 == -1) {
+					voiceHandle4 = Novice::PlayAudio(BGM3, false, 0.5f);
+				}
+
+				//移動
+
+				if (keys[DIK_SPACE]) {  //スペースを押されたら時間を計測
+					count++;
+					onceflag = true;
+					L_push = false;
+					S_push = false;
+				}
+
+				if (keys[DIK_SPACE] && onceflag == true && count >= 20) {  //スペースを長押しした時に移動
+					onceflag = false;
+					count = 0;
+					L_push = true;
+				}
+
+				if (preKeys[DIK_SPACE] && !keys[DIK_SPACE] && onceflag == true && count <= 20) {  //スペースを長押しない時に攻撃
+					onceflag = false;
+					count = 0;
+					S_push = true;
+				}
+				else {
+					S_push = false;
+				}
+
+				if (L_push == true) {  //長押し判定
+					ball.position.y -= ball.speed;
+					if (ball.position.y == 70) {  //上に移動した時
+						ball.speed -= ball.speed + 180;
+					}
+					else if (ball.position.y == 430) {  //下に移動した時
+						ball.speed -= ball.speed - 180;
+					}
+				}
+
+				if (count == 0) {  //バグ対策
+					L_push = false;
+				}
+
+				// 敵の移動
+
+				if (isEnemyAlive) {
+					enemy.position.x -= enemy.speed;
+				}
+
+				//敵の当たり判定
+
+				if (S_push) {
+					if (isEnemyAlive) {
+						if ((ball.radius / 2 + enemy.radius / 2) * (ball.radius / 2 + enemy.radius / 2) > ((ball.position.x - 18) - (enemy.position.x + 18)) * ((ball.position.x - 18) - (enemy.position.x + 18)) + ((ball.position.y - 18) - (enemy.position.y + 18)) + ((ball.position.y - 18) - (enemy.position.y + 18))) {
+							if (isEnemyAlive == true) {
+								if (!Novice::IsPlayingAudio(voiceHandle6) || voiceHandle6 == -1) {
+									voiceHandle6 = Novice::PlayAudio(Kill, false, 20.0f);
+								}
+								isEnemyAlive = false;
+							}
+						}
+					}
+				}
+
+				//カウントダウン
+				if (time_count > 0) {
+					pos_x -= 0.18f;
+				}
+
+				//画像スクロール
+
+				bg1X = bg1X - bg_speed;
+				bg2X = bg2X - bg_speed;
+				if (bg1X < -1270 && bg2X < 0) {
+					bg1X = 1270;
+				}
+				if (bg2X < -1270 && bg1X < 0) {
+					bg2X = 1270;
+				}
+
+				//曲が終わったら終了させる
+
+				if (time_count < 50) {
+					Novice::StopAudio(voiceHandle4);
+				}
+
+				if (time_count < 0) {
+					time_count = 0;
+					Stage_Normalflag = false;
+					Stage_Hard_Clearflag = true;
+					Clearflag = true;
+					scene_no = eScene_CLEAR;
+				}
+			}
+
 			break;
 		case eScene_CLEAR:
 			if (Clearflag) {
 				if (!Novice::IsPlayingAudio(voiceHandle5) || voiceHandle5 == -1) {
 					voiceHandle5 = Novice::PlayAudio(Result, true, 0.5f);
 				}
-				if (!Stage_Easyflag) {
+				if (Stage_Easy_Clearflag) {
 					ball.position.x = 100.0f;
 					ball.position.y = 250.0f;
 					enemy.position.x = 1000.0f;
@@ -392,10 +516,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 						Gameflag = true;
 						Clearflag = false;
 						isEnemyAlive = true;
+						Stage_Easy_Clearflag = false;
 						scene_no = eScene_STAGE_NORMAL;
 					}
 				}
-				if (!Stage_Normalflag) {
+				if (Stage_Normal_Clearflag) {
 					ball.position.x = 100.0f;
 					ball.position.y = 250.0f;
 					enemy.position.x = 1000.0f; 
@@ -406,9 +531,28 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 						Gameflag = true;
 						isEnemyAlive = true;
 						Clearflag = false;
-						scene_no = eScene_STAGE_NORMAL;
+						Stage_Normal_Clearflag = false;
+						scene_no = eScene_STAGE_HARD;
 					}
 				}
+				if (Stage_Hard_Clearflag) {
+					ball.position.x = 100.0f;
+					ball.position.y = 250.0f;
+					enemy.position.x = 1000.0f;
+					enemy.position.y = 270.0f;
+					pos_x = 1200.0f;
+					frameCount = 0;
+					if (keys[DIK_R]) {
+						Gameflag = true;
+						isEnemyAlive = true;
+						Clearflag = false;
+						Stage_Hard_Clearflag = false;
+						scene_no = eScene_STAGE_HARD;
+					}
+				}
+			}
+			if (!Clearflag) {
+				Novice::StopAudio(voiceHandle5);
 			}
 			break;
 		}
@@ -472,6 +616,29 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			}
 			break;
 		case eScene_STAGE_HARD:
+			Novice::DrawSprite(bg1X, 0, Haikei, 1, 1, 0.0f, WHITE);
+			Novice::DrawSprite(bg2X, 0, Haikei, 1, 1, 0.0f, WHITE);
+			Novice::ScreenPrintf(0, 0, "TimeCount = %d", time_count);
+			Novice::DrawLine(100, 180, 1200, 180, WHITE);
+			Novice::DrawLine(100, 360, 1200, 360, WHITE);
+			Novice::DrawLine(100, 540, 1200, 540, WHITE);
+			Novice::DrawSprite(0, 650, CountUI, 1, 1, 0.0f, WHITE);
+			Novice::DrawSprite((int)pos_x, (int)pos_y, Ebi, 1, 1, 0.0f, WHITE);
+			Novice::DrawSprite(int(ball.position.x), int(ball.position.y), Ebi, 1, 1, 0.0f, WHITE);
+			if (isEnemyAlive) {
+				Novice::DrawSprite(int(enemy.position.x), int(enemy.position.y), Ika, 1, 1, 0.0f, WHITE);
+			}
+			if (Gameflag) {
+				if (AnimCount == 0) {
+					Novice::DrawSprite(260, 180, ReadyUI, 1, 1, 0.0f, WHITE);
+				}
+				if (AnimCount == 1) {
+					Novice::DrawSprite(260, 180, StartUI, 1, 1, 0.0f, WHITE);
+				}
+			}
+			if (Clearflag) {
+				Novice::DrawSprite(260, 180, ClearUI, 1, 1, 0.0f, WHITE);
+			}
 			break;
 		case eScene_CLEAR:
 			Novice::DrawSprite(0, 0, Clear, 1, 1, 0.0f, WHITE);
