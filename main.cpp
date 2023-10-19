@@ -58,6 +58,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//背景画像
 	int bg1X = 0, bg2X = 1280;
 	int bg3X = 0, bg4X = 1280;
+	int bg5X = 0, bg6X = 1280;
 	int bg_speed = 4;
 
 	//アニメーションカウント
@@ -73,7 +74,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	bool Stage_Hardflag = false;  //難易度HARDフラグ
 	bool Stage_Hard_Clearflag = false;  //難易度Hardクリアフラグ
 	bool Switchingflag = false;  //画面切り替えフラグ
-	bool Pushflag = false;  //押した判定用
+	bool Push1flag = false;  //押した1判定用
+	bool Push2flag = false;  //押した2判定用
 	bool onceflag = false;  //押されたか用フラグ
 	bool L_push = false;  //長押しフラグ
 	bool S_push = false;  //短押しフラグ
@@ -110,9 +112,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	int Ika = Novice::LoadTexture("./Resources/ika.png");
 	int Maguro = Novice::LoadTexture("./Resources/maguro.png");
 	int Start = Novice::LoadTexture("./Resources/Start.png");
-	int Haikei[2] = {
+	int Haikei[3] = {
 		Novice::LoadTexture("./Resources/Haikei1.png"),
 		Novice::LoadTexture("./Resources/Haikei2.png"),
+		Novice::LoadTexture("./Resources/Haikei3.png")
 	};
 	int Clear = Novice::LoadTexture("./Resources/Clear.png");
 	int ReadyUI = Novice::LoadTexture("./Resources/UI/Ready.png");
@@ -375,7 +378,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
-							Pushflag = true;
+							Push1flag = true;
 							Switchingflag = false;
 						}
 					}
@@ -387,7 +390,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
-							Pushflag = false;
+							Push1flag = false;
 							Switchingflag = false;
 						}
 					}
@@ -399,7 +402,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
-							Pushflag = true;
+							Push1flag = true;
 							Switchingflag = false;
 						}
 					}
@@ -411,7 +414,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
-							Pushflag = false;
+							Push1flag = false;
 							Switchingflag = false;
 						}
 					}
@@ -561,7 +564,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
-							Pushflag = true;
+							Push1flag = true;
 							Switchingflag = false;
 						}
 					}
@@ -573,7 +576,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
-							Pushflag = false;
+							Push1flag = false;
+							Push2flag = true;
 							Switchingflag = false;
 						}
 					}
@@ -585,7 +589,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
-							Pushflag = true;
+							Push1flag = false;
+							Push2flag = false;
 							Switchingflag = false;
 						}
 					}
@@ -597,7 +602,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
-							Pushflag = false;
+							Push1flag = false;
+							Push2flag = true;
 							Switchingflag = false;
 						}
 					}
@@ -609,7 +615,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
-							Pushflag = true;
+							Push1flag = false;
+							Push2flag = false;
 							Switchingflag = false;
 						}
 					}
@@ -621,7 +628,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
-							Pushflag = false;
+							Push1flag = true;
+							Push2flag = false;
 							Switchingflag = false;
 						}
 					}
@@ -630,7 +638,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				//カウントダウン
 
 				if (time_count > 0) {
-					pos_x -= 0.18f;
+					pos_x -= 0.17f;
 				}
 
 				//画像スクロール
@@ -639,6 +647,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				bg2X = bg2X - bg_speed;
 				bg3X = bg3X - bg_speed;
 				bg4X = bg4X - bg_speed;
+				bg5X = bg5X - bg_speed;
+				bg6X = bg6X - bg_speed;
 
 				if (bg1X < -1270 && bg2X < 0) {
 					bg1X = 1270;
@@ -651,6 +661,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				}
 				if (bg4X < -1270 && bg3X < 0) {
 					bg4X = 1270;
+				}
+				if (bg5X < -1270 && bg6X < 0) {
+					bg5X = 1270;
+				}
+				if (bg6X < -1270 && bg5X < 0) {
+					bg6X = 1270;
 				}
 
 				//曲が終わったら終了させる
@@ -686,7 +702,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 						Clearflag = false;
 						isEnemyAlive = true;
 						Stage_Easy_Clearflag = false;
-						Pushflag = false;
+						Push1flag = false;
 						Switchingflag = false;
 						scene_no = eScene_STAGE_NORMAL;
 					}
@@ -703,7 +719,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 						isEnemyAlive = true;
 						Clearflag = false;
 						Stage_Normal_Clearflag = false;
-						Pushflag = false;
+						Push1flag = false;
 						Switchingflag = false;
 						scene_no = eScene_STAGE_HARD;
 					}
@@ -720,7 +736,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 						isEnemyAlive = true;
 						Clearflag = false;
 						Stage_Hard_Clearflag = false;
-						Pushflag = false;
+						Push1flag = false;
+						Push2flag = false;
 						Switchingflag = false;
 						scene_no = eScene_STAGE_HARD;
 					}
@@ -766,11 +783,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			}
 			break;
 		case eScene_STAGE_NORMAL:
-			if (!Pushflag) {
+			if (!Push1flag) {
 				Novice::DrawSprite(bg1X, 0, Haikei[0], 1, 1, 0.0f, WHITE);
 				Novice::DrawSprite(bg2X, 0, Haikei[0], 1, 1, 0.0f, WHITE);
 			}
-			if (Pushflag) {
+			if (Push1flag) {
 				Novice::DrawSprite(bg3X, 0, Haikei[1], 1, 1, 0.0f, WHITE);
 				Novice::DrawSprite(bg4X, 0, Haikei[1], 1, 1, 0.0f, WHITE);
 			}
@@ -797,13 +814,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			}
 			break;
 		case eScene_STAGE_HARD:
-			if (!Pushflag) {
-				Novice::DrawSprite(bg1X, 0, Haikei[0], 1, 1, 0.0f, WHITE);
-				Novice::DrawSprite(bg2X, 0, Haikei[0], 1, 1, 0.0f, WHITE);
+			if (!Push1flag) {
+				if (!Push2flag) {
+					Novice::DrawSprite(bg1X, 0, Haikei[0], 1, 1, 0.0f, WHITE);
+					Novice::DrawSprite(bg2X, 0, Haikei[0], 1, 1, 0.0f, WHITE);
+				}
 			}
-			if (Pushflag) {
-				Novice::DrawSprite(bg3X, 0, Haikei[1], 1, 1, 0.0f, WHITE);
-				Novice::DrawSprite(bg4X, 0, Haikei[1], 1, 1, 0.0f, WHITE);
+			if (Push1flag) {
+				if (!Push2flag) {
+					Novice::DrawSprite(bg3X, 0, Haikei[1], 1, 1, 0.0f, WHITE);
+					Novice::DrawSprite(bg4X, 0, Haikei[1], 1, 1, 0.0f, WHITE);
+				}
+			}
+			if (!Push1flag) {
+				if (Push2flag) {
+					Novice::DrawSprite(bg5X, 0, Haikei[2], 1, 1, 0.0f, WHITE);
+					Novice::DrawSprite(bg6X, 0, Haikei[2], 1, 1, 0.0f, WHITE);
+				}
 			}
 			Novice::ScreenPrintf(0, 0, "TimeCount = %d", time_AnimCount);
 			Novice::DrawLine(100, 180, 1200, 180, WHITE);
