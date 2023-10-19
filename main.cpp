@@ -52,7 +52,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	int count = 0;
 
 	//曲の時間
-	int time_count = 6800;
+	int time_count = 0;
+	int time_AnimCount = 0;
 
 	//背景画像
 	int bg1X = 0, bg2X = 1280;
@@ -139,7 +140,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			if (keys[DIK_RETURN] && !preKeys[DIK_RETURN]) {  //ENTER押したとき
 				Novice::StopAudio(voiceHandle1);
-				scene_no = eScene_STAGE_NORMAL;
+				scene_no = eScene_STAGE_EASY;
 			}
 
 			break;
@@ -154,7 +155,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			if (Gameflag) {
 				frameCount++;
-				time_count = 6800;
+				time_count = 0;
 				if (frameCount == 60) {
 					AnimCount += 1;
 				}
@@ -169,7 +170,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			if (Stage_Easyflag) {
 				
-				time_count--;
+				//時間制限
+
+				time_count++;
+
+				if (time_count == 60) {
+					time_AnimCount += 1;
+					time_count = 0;
+				}
 
 				if (!Novice::IsPlayingAudio(voiceHandle2) || voiceHandle2 == -1) {
 					voiceHandle2 = Novice::PlayAudio(BGM1, false, 0.5f);
@@ -252,12 +260,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 				//曲が終わったら終了させる
 				
-				if (time_count < 100) {
+				if (time_AnimCount > 113) {
 					Novice::StopAudio(voiceHandle2);
 					Clearflag = true;
 				}
 
-				if (time_count < 0) {
+				if (time_AnimCount == 116) {
 					time_count = 0;
 					Stage_Easyflag = false;
 					Stage_Easy_Clearflag = true;
@@ -274,7 +282,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			if (Gameflag) {
 				frameCount++;
-				time_count = 6800;
+				time_count = 0;
 				if (frameCount == 60) {
 					AnimCount += 1;
 				}
@@ -289,7 +297,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			if (Stage_Normalflag) {
 
-				time_count--;
+				time_count++;
+
+				if (time_count == 60) {
+					time_AnimCount += 1;
+					time_count = 0;
+				}
 
 				if (!Novice::IsPlayingAudio(voiceHandle3) || voiceHandle3 == -1) {
 					voiceHandle3 = Novice::PlayAudio(BGM2, false, 0.5f);
@@ -408,12 +421,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 				//曲が終わったら終了させる
 
-				if (time_count < 50) {
+				if (time_AnimCount > 113) {
 					Novice::StopAudio(voiceHandle3);
 					Clearflag = true;
 				}
 
-				if (time_count < 0) {
+				if (time_AnimCount == 116) {
 					time_count = 0;
 					Stage_Normalflag = false;
 					Stage_Normal_Clearflag = true;
@@ -431,7 +444,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			if (Gameflag) {
 				frameCount++;
-				time_count = 6800;
+				time_count = 0;
 				if (frameCount == 60) {
 					AnimCount += 1;
 				}
@@ -446,7 +459,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			if (Stage_Hardflag) {
 
-				time_count--;
+				time_count++;
+
+				if (time_count == 60) {
+					time_AnimCount += 1;
+					time_count = 0;
+				}
 
 				if (!Novice::IsPlayingAudio(voiceHandle4) || voiceHandle4 == -1) {
 					voiceHandle4 = Novice::PlayAudio(BGM3, false, 0.5f);
@@ -612,7 +630,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		case eScene_STAGE_EASY:
 			Novice::DrawSprite(bg1X, 0, Haikei[0], 1, 1, 0.0f, WHITE);
 			Novice::DrawSprite(bg2X, 0, Haikei[0], 1, 1, 0.0f, WHITE);
-			Novice::ScreenPrintf(0, 0, "TimeCount = %d", time_count);
+			Novice::ScreenPrintf(0, 0, "TimeCount = %d", time_AnimCount);
 			Novice::DrawLine(100, 180, 1200, 180, WHITE);
 			Novice::DrawLine(100, 360, 1200, 360, WHITE);
 			Novice::DrawLine(100, 540, 1200, 540, WHITE);
