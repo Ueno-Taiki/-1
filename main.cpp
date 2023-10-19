@@ -140,7 +140,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			if (keys[DIK_RETURN] && !preKeys[DIK_RETURN]) {  //ENTER押したとき
 				Novice::StopAudio(voiceHandle1);
-				scene_no = eScene_STAGE_EASY;
+				scene_no = eScene_STAGE_HARD;
 			}
 
 			break;
@@ -260,12 +260,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 				//曲が終わったら終了させる
 				
-				if (time_AnimCount > 113) {
+				if (time_AnimCount > 115) {
 					Novice::StopAudio(voiceHandle2);
 					Clearflag = true;
 				}
 
-				if (time_AnimCount == 116) {
+				if (time_AnimCount == 118) {
 					time_count = 0;
 					Stage_Easyflag = false;
 					Stage_Easy_Clearflag = true;
@@ -371,10 +371,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 				//1回目の切り替え
 
-				if (time_count < 6000) { 
+				if (time_AnimCount > 22) { 
 					Switchingflag = true;
 					if (Switchingflag) {
-						if (preKeys[DIK_SPACE] && !keys[DIK_SPACE]) {
+						if (preKeys[DIK_SPACE]) {
 							Pushflag = true;
 							Switchingflag = false;
 						}
@@ -383,10 +383,34 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 				//2回目の切り替え
 
-				if (time_count < 3000) {
+				if (time_AnimCount > 48) {
 					Switchingflag = true;
 					if (Switchingflag) {
-						if (preKeys[DIK_SPACE] && !keys[DIK_SPACE]) {
+						if (preKeys[DIK_SPACE]) {
+							Pushflag = false;
+							Switchingflag = false;
+						}
+					}
+				}
+
+				//3回目の切り替え
+
+				if (time_AnimCount > 82) {
+					Switchingflag = true;
+					if (Switchingflag) {
+						if (preKeys[DIK_SPACE]) {
+							Pushflag = true;
+							Switchingflag = false;
+						}
+					}
+				}
+
+				//4回目切り替え
+
+				if (time_AnimCount > 107) {
+					Switchingflag = true;
+					if (Switchingflag) {
+						if (preKeys[DIK_SPACE]) {
 							Pushflag = false;
 							Switchingflag = false;
 						}
@@ -396,7 +420,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				//カウントダウン
 
 				if (time_count > 0) {
-					pos_x -= 0.18f;
+					pos_x -= 0.16f;
 				}
 
 				//画像スクロール
@@ -421,12 +445,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 				//曲が終わったら終了させる
 
-				if (time_AnimCount > 113) {
+				if (time_AnimCount > 130) {
 					Novice::StopAudio(voiceHandle3);
 					Clearflag = true;
 				}
 
-				if (time_AnimCount == 116) {
+				if (time_AnimCount == 134) {
 					time_count = 0;
 					Stage_Normalflag = false;
 					Stage_Normal_Clearflag = true;
@@ -529,6 +553,80 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					}
 				}
 
+				//曲が変わったら切り替え
+
+				//1回目の切り替え
+
+				if (time_AnimCount > 14) {
+					Switchingflag = true;
+					if (Switchingflag) {
+						if (preKeys[DIK_SPACE]) {
+							Pushflag = true;
+							Switchingflag = false;
+						}
+					}
+				}
+
+				//2回目の切り替え
+
+				if (time_AnimCount > 36) {
+					Switchingflag = true;
+					if (Switchingflag) {
+						if (preKeys[DIK_SPACE]) {
+							Pushflag = false;
+							Switchingflag = false;
+						}
+					}
+				}
+
+				//3回目の切り替え
+
+				if (time_AnimCount > 48) {
+					Switchingflag = true;
+					if (Switchingflag) {
+						if (preKeys[DIK_SPACE]) {
+							Pushflag = true;
+							Switchingflag = false;
+						}
+					}
+				}
+
+				//4回目切り替え
+
+				if (time_AnimCount > 61) {
+					Switchingflag = true;
+					if (Switchingflag) {
+						if (preKeys[DIK_SPACE]) {
+							Pushflag = false;
+							Switchingflag = false;
+						}
+					}
+				}
+
+				//5回目切り替え
+
+				if (time_AnimCount > 79) {
+					Switchingflag = true;
+					if (Switchingflag) {
+						if (preKeys[DIK_SPACE]) {
+							Pushflag = true;
+							Switchingflag = false;
+						}
+					}
+				}
+
+				//6回目切り替え
+
+				if (time_AnimCount > 99) {
+					Switchingflag = true;
+					if (Switchingflag) {
+						if (preKeys[DIK_SPACE]) {
+							Pushflag = false;
+							Switchingflag = false;
+						}
+					}
+				}
+
 				//カウントダウン
 
 				if (time_count > 0) {
@@ -539,21 +637,30 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 				bg1X = bg1X - bg_speed;
 				bg2X = bg2X - bg_speed;
+				bg3X = bg3X - bg_speed;
+				bg4X = bg4X - bg_speed;
+
 				if (bg1X < -1270 && bg2X < 0) {
 					bg1X = 1270;
 				}
 				if (bg2X < -1270 && bg1X < 0) {
 					bg2X = 1270;
 				}
+				if (bg3X < -1270 && bg4X < 0) {
+					bg3X = 1270;
+				}
+				if (bg4X < -1270 && bg3X < 0) {
+					bg4X = 1270;
+				}
 
 				//曲が終わったら終了させる
 
-				if (time_count < 100) {
+				if (time_AnimCount > 121) {
 					Novice::StopAudio(voiceHandle4);
 					Clearflag = true;
 				}
 
-				if (time_count < 0) {
+				if (time_AnimCount == 125){
 					time_count = 0;
 					Stage_Normalflag = false;
 					Stage_Hard_Clearflag = true;
@@ -579,6 +686,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 						Clearflag = false;
 						isEnemyAlive = true;
 						Stage_Easy_Clearflag = false;
+						Pushflag = false;
+						Switchingflag = false;
 						scene_no = eScene_STAGE_NORMAL;
 					}
 				}
@@ -594,6 +703,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 						isEnemyAlive = true;
 						Clearflag = false;
 						Stage_Normal_Clearflag = false;
+						Pushflag = false;
+						Switchingflag = false;
 						scene_no = eScene_STAGE_HARD;
 					}
 				}
@@ -609,6 +720,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 						isEnemyAlive = true;
 						Clearflag = false;
 						Stage_Hard_Clearflag = false;
+						Pushflag = false;
+						Switchingflag = false;
 						scene_no = eScene_STAGE_HARD;
 					}
 				}
@@ -661,7 +774,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				Novice::DrawSprite(bg3X, 0, Haikei[1], 1, 1, 0.0f, WHITE);
 				Novice::DrawSprite(bg4X, 0, Haikei[1], 1, 1, 0.0f, WHITE);
 			}
-			Novice::ScreenPrintf(0, 0, "TimeCount = %d", time_count);
+			Novice::ScreenPrintf(0, 0, "TimeCount = %d", time_AnimCount);
 			Novice::DrawLine(100, 180, 1200, 180, WHITE);
 			Novice::DrawLine(100, 360, 1200, 360, WHITE);
 			Novice::DrawLine(100, 540, 1200, 540, WHITE);
@@ -684,9 +797,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			}
 			break;
 		case eScene_STAGE_HARD:
-			Novice::DrawSprite(bg1X, 0, Haikei[0], 1, 1, 0.0f, WHITE);
-			Novice::DrawSprite(bg2X, 0, Haikei[0], 1, 1, 0.0f, WHITE);
-			Novice::ScreenPrintf(0, 0, "TimeCount = %d", time_count);
+			if (!Pushflag) {
+				Novice::DrawSprite(bg1X, 0, Haikei[0], 1, 1, 0.0f, WHITE);
+				Novice::DrawSprite(bg2X, 0, Haikei[0], 1, 1, 0.0f, WHITE);
+			}
+			if (Pushflag) {
+				Novice::DrawSprite(bg3X, 0, Haikei[1], 1, 1, 0.0f, WHITE);
+				Novice::DrawSprite(bg4X, 0, Haikei[1], 1, 1, 0.0f, WHITE);
+			}
+			Novice::ScreenPrintf(0, 0, "TimeCount = %d", time_AnimCount);
 			Novice::DrawLine(100, 180, 1200, 180, WHITE);
 			Novice::DrawLine(100, 360, 1200, 360, WHITE);
 			Novice::DrawLine(100, 540, 1200, 540, WHITE);
