@@ -45,6 +45,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		3.0f
 	};
 
+	//モーション
+	int frameCount = 0;
+	int playerAnimCount = 0;
+
 	//カウントキャラクター
 	float pos_x = 1200.0f, pos_y = 580.0f;
 
@@ -62,10 +66,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	int bg_speed = 4;
 
 	//アニメーションカウント
-	int frameCount = 0;
+	int AnimframeCount = 0;
 	int AnimCount = 0;
 
 	//フラグ管理
+	bool Upflag = true;
+	bool Downflag = false;
+	bool Startflag = true;
 	bool Gameflag = true;  //ゲームスタート用フラグ
 	bool Stage_Easyflag = false;  //難易度EASYフラグ
 	bool Stage_Easy_Clearflag = false;  //難易度EASYクリアフラグ
@@ -108,10 +115,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	int voiceHandle6 = -1;
 
 	//画像読み込み
+	int Start[6] = {
+		Novice::LoadTexture("./Resources/Start1.png"),
+		Novice::LoadTexture("./Resources/Start2.png"),
+		Novice::LoadTexture("./Resources/Start3.png"),
+		Novice::LoadTexture("./Resources/Start4.png"),
+		Novice::LoadTexture("./Resources/Start5.png"),
+		Novice::LoadTexture("./Resources/Start6.png"),
+	};
+	int Arrow = Novice::LoadTexture("./Resources/arrow.png");
 	int Ebi = Novice::LoadTexture("./Resources/ebi.png");
 	int Ika = Novice::LoadTexture("./Resources/ika.png");
 	int Maguro = Novice::LoadTexture("./Resources/maguro.png");
-	int Start = Novice::LoadTexture("./Resources/Start.png");
 	int Haikei[3] = {
 		Novice::LoadTexture("./Resources/Haikei1.png"),
 		Novice::LoadTexture("./Resources/Haikei2.png"),
@@ -136,14 +151,55 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		switch (scene_no) {
 		case eScene_START:
+			//シーンの切り替え
 
 			if (!Novice::IsPlayingAudio(voiceHandle1) || voiceHandle1 == -1) {
 				voiceHandle1 = Novice::PlayAudio(GameStart, true, 0.5f);
 			}
 
+			if (keys[DIK_UP] && !preKeys[DIK_UP]) {  //↑押したとき
+				Upflag = true;
+				Downflag = false;
+			}
+
+			if (keys[DIK_DOWN] && !preKeys[DIK_DOWN]) {  //↓押したとき
+				Upflag = false;
+				Downflag = true;
+			}
+
 			if (keys[DIK_RETURN] && !preKeys[DIK_RETURN]) {  //ENTER押したとき
-				Novice::StopAudio(voiceHandle1);
-				scene_no = eScene_STAGE_HARD;
+				if (Upflag) {
+					Novice::StopAudio(voiceHandle1);
+					scene_no = eScene_STAGE_EASY;
+					Startflag = false;
+					frameCount = 0;
+					playerAnimCount = 0;
+				}
+				if (Downflag) {
+					Novice::Finalize();
+					return 0;
+				}
+			}
+
+			//ゲームスタート画面
+
+			if (Startflag) {
+				frameCount++;
+				if (frameCount == 15) {
+					playerAnimCount += 1;
+				}
+				if (frameCount == 30) {
+					playerAnimCount += 1;
+				}
+				if (frameCount == 45) {
+					playerAnimCount += 1;
+				}
+				if (frameCount == 60) {
+					playerAnimCount += 1;
+				}
+				if (frameCount == 75) {
+					playerAnimCount += 1;
+				}
 			}
 
 			break;
@@ -157,12 +213,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//ゲームスタートアニメーション
 
 			if (Gameflag) {
-				frameCount++;
+				AnimframeCount++;
 				time_count = 0;
-				if (frameCount == 60) {
+				if (AnimframeCount == 60) {
 					AnimCount += 1;
 				}
-				if (frameCount == 120) {
+				if (AnimframeCount == 120) {
 					AnimCount = 0;
 					Gameflag = false;
 					Stage_Easyflag = true;
@@ -284,12 +340,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//ゲームスタートアニメーション
 
 			if (Gameflag) {
-				frameCount++;
+				AnimframeCount++;
 				time_count = 0;
-				if (frameCount == 60) {
+				if (AnimframeCount == 60) {
 					AnimCount += 1;
 				}
-				if (frameCount == 120) {
+				if (AnimframeCount == 120) {
 					AnimCount = 0;
 					Gameflag = false;
 					Stage_Normalflag = true;
@@ -470,12 +526,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//ゲームスタートアニメーション
 
 			if (Gameflag) {
-				frameCount++;
+				AnimframeCount++;
 				time_count = 0;
-				if (frameCount == 60) {
+				if (AnimframeCount == 60) {
 					AnimCount += 1;
 				}
-				if (frameCount == 120) {
+				if (AnimframeCount == 120) {
 					AnimCount = 0;
 					Gameflag = false;
 					Stage_Hardflag = true;
@@ -696,7 +752,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					enemy.position.x = 1000.0f;
 					enemy.position.y = 270.0f;
 					pos_x = 1200.0f;
-					frameCount = 0;
+					AnimframeCount = 0;
 					if (keys[DIK_R]) {
 						Gameflag = true;
 						Clearflag = false;
@@ -713,7 +769,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					enemy.position.x = 1000.0f; 
 					enemy.position.y = 270.0f;
 					pos_x = 1200.0f;
-					frameCount = 0;
+					AnimframeCount = 0;
 					if (keys[DIK_R]) {
 						Gameflag = true;
 						isEnemyAlive = true;
@@ -730,7 +786,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					enemy.position.x = 1000.0f;
 					enemy.position.y = 270.0f;
 					pos_x = 1200.0f;
-					frameCount = 0;
+					AnimframeCount = 0;
 					if (keys[DIK_R]) {
 						Gameflag = true;
 						isEnemyAlive = true;
@@ -753,14 +809,36 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 		switch (scene_no) {
 		case eScene_START:
-			Novice::DrawSprite(0, 0, Start, 1, 1, 0.0f, WHITE);
+			if (playerAnimCount == 0) {
+				Novice::DrawSprite(0, 0, Start[0], 1, 1, 0.0f, WHITE);
+			}
+			if (playerAnimCount == 1) {
+				Novice::DrawSprite(0, 0, Start[1], 1, 1, 0.0f, WHITE);
+			}
+			if (playerAnimCount == 2) {
+				Novice::DrawSprite(0, 0, Start[2], 1, 1, 0.0f, WHITE);
+			}
+			if (playerAnimCount == 3) {
+				Novice::DrawSprite(0, 0, Start[3], 1, 1, 0.0f, WHITE);
+			}
+			if (playerAnimCount == 4) {
+				Novice::DrawSprite(0, 0, Start[4], 1, 1, 0.0f, WHITE);
+			}
+			if (playerAnimCount == 5) {
+				Novice::DrawSprite(0, 0, Start[5], 1, 1, 0.0f, WHITE);
+			}
+			if (Upflag) {
+				Novice::DrawSprite(550, 450, Arrow, 1, 1, 0.0f, WHITE);
+			}
+			if (Downflag) {
+				Novice::DrawSprite(550, 580, Arrow, 1, 1, 0.0f, WHITE);
+			}
 			break;
 		case eScene_SELECT:
 			break;
 		case eScene_STAGE_EASY:
 			Novice::DrawSprite(bg1X, 0, Haikei[0], 1, 1, 0.0f, WHITE);
 			Novice::DrawSprite(bg2X, 0, Haikei[0], 1, 1, 0.0f, WHITE);
-			Novice::ScreenPrintf(0, 0, "TimeCount = %d", time_AnimCount);
 			Novice::DrawLine(100, 180, 1200, 180, WHITE);
 			Novice::DrawLine(100, 360, 1200, 360, WHITE);
 			Novice::DrawLine(100, 540, 1200, 540, WHITE);
@@ -791,7 +869,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				Novice::DrawSprite(bg3X, 0, Haikei[1], 1, 1, 0.0f, WHITE);
 				Novice::DrawSprite(bg4X, 0, Haikei[1], 1, 1, 0.0f, WHITE);
 			}
-			Novice::ScreenPrintf(0, 0, "TimeCount = %d", time_AnimCount);
 			Novice::DrawLine(100, 180, 1200, 180, WHITE);
 			Novice::DrawLine(100, 360, 1200, 360, WHITE);
 			Novice::DrawLine(100, 540, 1200, 540, WHITE);
@@ -832,7 +909,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Novice::DrawSprite(bg6X, 0, Haikei[2], 1, 1, 0.0f, WHITE);
 				}
 			}
-			Novice::ScreenPrintf(0, 0, "TimeCount = %d", time_AnimCount);
 			Novice::DrawLine(100, 180, 1200, 180, WHITE);
 			Novice::DrawLine(100, 360, 1200, 360, WHITE);
 			Novice::DrawLine(100, 540, 1200, 540, WHITE);
