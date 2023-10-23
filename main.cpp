@@ -125,7 +125,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	int BGM1 = Novice::LoadAudio("./Resources/BGM/BGM1.mp3");  
 	int BGM2 = Novice::LoadAudio("./Resources/BGM/BGM2.mp3");
 	int BGM3 = Novice::LoadAudio("./Resources/BGM/BGM3.mp3");
-	int Result = Novice::LoadAudio("./Resources/BGM/Result.mp3");
+	int ResultBGM = Novice::LoadAudio("./Resources/BGM/Result.mp3");
 	int Kill = Novice::LoadAudio("./Resources/SE/Kill.mp3");
 	int Success = Novice::LoadAudio("./Resources/SE/Success.mp3");
 	int voiceHandle1 = -1;
@@ -154,7 +154,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Novice::LoadTexture("./Resources/Haikei2.png"),
 		Novice::LoadTexture("./Resources/Haikei3.png")
 	};
-	int Clear = Novice::LoadTexture("./Resources/Clear.png");
+	int Result = Novice::LoadTexture("./Resources/Result.png");
 	int HukidasiUI = Novice::LoadTexture("./Resources/UI/Hukidasi.png");
 	int TutorialUI[10] = {
 		Novice::LoadTexture("./Resources/UI/tutorial1.png"),
@@ -1033,7 +1033,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		case eScene_CLEAR:
 			if (Clearflag) {
 				if (!Novice::IsPlayingAudio(voiceHandle5) || voiceHandle5 == -1) {
-					voiceHandle5 = Novice::PlayAudio(Result, true, 0.5f);
+					voiceHandle5 = Novice::PlayAudio(ResultBGM, true, 0.5f);
 				}
 				if (Stage_Easy_Clearflag) {
 					ball.position.x = 100.0f;
@@ -1270,7 +1270,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			}
 			break;
 		case eScene_CLEAR:
-			Novice::DrawSprite(0, 0, Clear, 1, 1, 0.0f, WHITE);
+			Novice::DrawSprite(0, 0, Result, 1, 1, 0.0f, WHITE);
 			break;
 		}
 		/// ↑描画処理ここまで
