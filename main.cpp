@@ -127,12 +127,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	int BGM3 = Novice::LoadAudio("./Resources/BGM/BGM3.mp3");
 	int Result = Novice::LoadAudio("./Resources/BGM/Result.mp3");
 	int Kill = Novice::LoadAudio("./Resources/SE/Kill.mp3");
+	int Success = Novice::LoadAudio("./Resources/SE/Success.mp3");
 	int voiceHandle1 = -1;
 	int voiceHandle2 = -1;
 	int voiceHandle3 = -1;
 	int voiceHandle4 = -1;
 	int voiceHandle5 = -1;
 	int voiceHandle6 = -1;
+	int voiceHandle7 = -1;
 
 	//画像読み込み
 	int Start[6] = {
@@ -393,6 +395,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	
 				if (Switchingflag) {
 					if (preKeys[DIK_SPACE]) {
+						if (!Novice::IsPlayingAudio(voiceHandle7) || voiceHandle7 == -1) {
+							voiceHandle7 = Novice::PlayAudio(Success, false, 0.5f);
+						}
 						Push1flag = true;
 						Switchingflag = false;
 					}
@@ -672,6 +677,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
+							if (!Novice::IsPlayingAudio(voiceHandle7) || voiceHandle7 == -1) {
+								voiceHandle7 = Novice::PlayAudio(Success, false, 0.5f);
+							}
 							Push1flag = true;
 							Switchingflag = false;
 						}
@@ -684,6 +692,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
+							if (!Novice::IsPlayingAudio(voiceHandle7) || voiceHandle7 == -1) {
+								voiceHandle7 = Novice::PlayAudio(Success, false, 0.5f);
+							}
 							Push1flag = false;
 							Switchingflag = false;
 						}
@@ -696,6 +707,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
+							if (!Novice::IsPlayingAudio(voiceHandle7) || voiceHandle7 == -1) {
+								voiceHandle7 = Novice::PlayAudio(Success, false, 0.5f);
+							}
 							Push1flag = true;
 							Switchingflag = false;
 						}
@@ -708,6 +722,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
+							if (!Novice::IsPlayingAudio(voiceHandle7) || voiceHandle7 == -1) {
+								voiceHandle7 = Novice::PlayAudio(Success, false, 0.5f);
+							}
 							Push1flag = false;
 							Switchingflag = false;
 						}
@@ -874,6 +891,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
+							if (!Novice::IsPlayingAudio(voiceHandle7) || voiceHandle7 == -1) {
+								voiceHandle7 = Novice::PlayAudio(Success, false, 0.5f);
+							}
 							Push1flag = true;
 							Switchingflag = false;
 						}
@@ -886,6 +906,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
+							if (!Novice::IsPlayingAudio(voiceHandle7) || voiceHandle7 == -1) {
+								voiceHandle7 = Novice::PlayAudio(Success, false, 0.5f);
+							}
 							Push1flag = false;
 							Push2flag = true;
 							Switchingflag = false;
@@ -899,6 +922,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
+							if (!Novice::IsPlayingAudio(voiceHandle7) || voiceHandle7 == -1) {
+								voiceHandle7 = Novice::PlayAudio(Success, false, 0.5f);
+							}
 							Push1flag = false;
 							Push2flag = false;
 							Switchingflag = false;
@@ -912,6 +938,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
+							if (!Novice::IsPlayingAudio(voiceHandle7) || voiceHandle7 == -1) {
+								voiceHandle7 = Novice::PlayAudio(Success, false, 0.5f);
+							}
 							Push1flag = false;
 							Push2flag = true;
 							Switchingflag = false;
@@ -925,6 +954,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
+							if (!Novice::IsPlayingAudio(voiceHandle7) || voiceHandle7 == -1) {
+								voiceHandle7 = Novice::PlayAudio(Success, false, 0.5f);
+							}
 							Push1flag = false;
 							Push2flag = false;
 							Switchingflag = false;
@@ -938,6 +970,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
+							if (!Novice::IsPlayingAudio(voiceHandle7) || voiceHandle7 == -1) {
+								voiceHandle7 = Novice::PlayAudio(Success, false, 0.5f);
+							}
 							Push1flag = true;
 							Push2flag = false;
 							Switchingflag = false;
