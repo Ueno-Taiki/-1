@@ -51,6 +51,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//スコア
 	int score = 0;
 
+	//数字
+	int kazu = 65535;
+	int waru_kazu = 10000;
+	int x = 580, y = 400;
+	int keta = 0;
+
 	//カーソル移動
 	int MoveC = 0;
 
@@ -163,6 +169,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Novice::LoadTexture("./Resources/Haikei3.png")
 	};
 	int Result = Novice::LoadTexture("./Resources/Result.png");
+	int graph[10] = {
+	Novice::LoadTexture("./Resources/0.png"),
+	Novice::LoadTexture("./Resources/1.png"),
+	Novice::LoadTexture("./Resources/2.png"),
+	Novice::LoadTexture("./Resources/3.png"),
+	Novice::LoadTexture("./Resources/4.png"),
+	Novice::LoadTexture("./Resources/5.png"),
+	Novice::LoadTexture("./Resources/6.png"),
+	Novice::LoadTexture("./Resources/7.png"),
+	Novice::LoadTexture("./Resources/8.png"),
+	Novice::LoadTexture("./Resources/9.png"),
+	};
 	int HukidasiUI = Novice::LoadTexture("./Resources/UI/Hukidasi.png");
 	int TutorialUI[10] = {
 		Novice::LoadTexture("./Resources/UI/tutorial1.png"),
@@ -1061,6 +1079,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					enemy.position.y = 270.0f;
 					pos_x = 1200.0f;
 					AnimframeCount = 0;
+					time_AnimCount = 0;
 					if (keys[DIK_R]) {
 						Gameflag = true;
 						Clearflag = false;
@@ -1078,6 +1097,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					enemy.position.y = 270.0f;
 					pos_x = 1200.0f;
 					AnimframeCount = 0;
+					time_AnimCount = 0;
 					if (keys[DIK_R]) {
 						Gameflag = true;
 						isEnemyAlive[0] = true;
@@ -1095,6 +1115,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					enemy.position.y = 270.0f;
 					pos_x = 1200.0f;
 					AnimframeCount = 0;
+					time_AnimCount = 0;
 					if (keys[DIK_R]) {
 						Gameflag = true;
 						isEnemyAlive[0] = true;
@@ -1299,6 +1320,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			break;
 		case eScene_CLEAR:
 			Novice::DrawSprite(0, 0, Result, 1, 1, 0.0f, WHITE);
+			while (kazu > 0) {
+				int ans = kazu / waru_kazu;
+				Novice::DrawSprite(x + (keta * 142), y, graph[ans], 1, 1, 0.0f, WHITE);
+				keta = keta + 1;
+				kazu = kazu - waru_kazu * ans;
+				waru_kazu = waru_kazu / 10;
+			}
+			if (kazu == 0) {
+				kazu = score;
+				waru_kazu = 10000;
+				keta = 0;
+			}
 			break;
 		}
 		/// ↑描画処理ここまで
