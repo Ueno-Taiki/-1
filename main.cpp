@@ -81,6 +81,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	//アニメーションカウント
 	int AnimframeCount = 0;
+	int AnimframeCount1 = 0;
+	int AnimframeCount2 = 0;
 	int AnimCount = 0;
 
 	//フラグ管理
@@ -88,6 +90,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	bool Downflag = false;  //ダウンフラグ
 	bool Startflag = true;  //スタートフラグ
 	bool Gameflag = true;  //ゲームスタート用フラグ
+	bool Tutorialflag = false;  //チュートリアルフラグ
+	bool Moveflag = false;  //チュートリアル用動かすフラグ
 	bool Stage_Easyflag = false;  //難易度EASYフラグ
 	bool Stage_Easy_Clearflag = false;  //難易度EASYクリアフラグ
 	bool Stage_Normalflag = false;  //難易度NORMALフラグ
@@ -107,6 +111,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//画像切り替え
 	enum Scene {
 		eScene_START,
+		eScene_TUTORIAL,
 		eScene_SELECT,
 		eScene_STAGE_EASY,
 		eScene_STAGE_NORMAL,
@@ -148,6 +153,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Novice::LoadTexture("./Resources/Haikei3.png")
 	};
 	int Clear = Novice::LoadTexture("./Resources/Clear.png");
+	int HukidasiUI = Novice::LoadTexture("./Resources/UI/Hukidasi.png");
+	int TutorialUI[10] = {
+		Novice::LoadTexture("./Resources/UI/tutorial1.png"),
+		Novice::LoadTexture("./Resources/UI/tutorial2.png"),
+		Novice::LoadTexture("./Resources/UI/tutorial3.png"),
+		Novice::LoadTexture("./Resources/UI/tutorial4.png"),
+		Novice::LoadTexture("./Resources/UI/tutorial5.png"),
+		Novice::LoadTexture("./Resources/UI/tutorial6.png"),
+		Novice::LoadTexture("./Resources/UI/tutorial7.png"),
+		Novice::LoadTexture("./Resources/UI/tutorial8.png"),
+		Novice::LoadTexture("./Resources/UI/tutorial9.png"),
+		Novice::LoadTexture("./Resources/UI/tutorial10.png")
+	};
 	int ReadyUI = Novice::LoadTexture("./Resources/UI/Ready.png");
 	int StartUI = Novice::LoadTexture("./Resources/UI/Start.png");
 	int CountUI = Novice::LoadTexture("./Resources/UI/Count.png");
@@ -185,7 +203,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			if (keys[DIK_RETURN] && !preKeys[DIK_RETURN]) {  //ENTER押したとき
 				if (Upflag) {
 					Novice::StopAudio(voiceHandle1);
-					scene_no = eScene_STAGE_EASY;
+					scene_no = eScene_TUTORIAL;
 					Startflag = false;
 					frameCount = 0;
 					playerAnimCount = 0;
@@ -220,6 +238,179 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			break;
 		case eScene_SELECT:
 			break;
+		case eScene_TUTORIAL:
+			//マウスカーソル削除
+
+			Novice::SetMouseCursorVisibility(0);
+
+			//ゲームスタートアニメーション
+
+			if (Gameflag) {
+				AnimframeCount++;
+				time_count = 0;
+				if (AnimframeCount == 60) {
+					AnimCount += 1;
+				}
+				if (AnimframeCount == 120) {
+					Tutorialflag = true;
+				}
+				if (AnimframeCount == 380) {
+					Tutorialflag = false;
+					AnimCount += 1;
+				}
+				if (AnimframeCount == 440) {
+					Tutorialflag = true;
+				}
+				if (score == 300) {
+					Tutorialflag = false;
+					AnimCount += 1;
+					enemy.speed = 0;
+					score = 400;
+				}
+				if (score == 400) {
+					AnimframeCount1++;
+				}
+				if (AnimframeCount1 == 60) {
+					AnimCount += 1;
+				}
+				if (AnimframeCount1 == 120) {
+					Tutorialflag = true;
+					Moveflag = true;
+					AnimCount += 1;
+				}
+				if (AnimframeCount1 == 420) {
+					Tutorialflag = false;
+					AnimCount += 1;
+				}
+				if (AnimframeCount1 == 480) {
+					AnimCount += 1;
+				}
+				if (AnimframeCount1 == 600) {
+					Tutorialflag = true;
+					Switchingflag = true;
+					AnimCount += 1;
+				}
+				if (Push1flag) {
+					AnimframeCount2++;
+				}
+				if (AnimframeCount2 == 30) {
+					AnimCount += 1;
+				}
+				if (AnimframeCount2 == 120) {
+					AnimframeCount = 0;
+					AnimframeCount1 = 0;
+					AnimframeCount2 = 0;
+					AnimCount = 0;
+					enemy.speed = 3.0f;
+					Push1flag = false;
+					scene_no = eScene_STAGE_EASY;
+				}
+			}
+
+			//チュートリアル
+			if (Tutorialflag) {
+				//移動
+
+				if (keys[DIK_SPACE]) {  //スペースを押されたら時間を計測
+					count++;
+					onceflag = true;
+					L_push = false;
+					S_push = false;
+				}
+
+				if (Moveflag) {
+					if (keys[DIK_SPACE] && onceflag == true && count >= 20) {  //スペースを長押しした時に移動
+						onceflag = false;
+						count = 0;
+						L_push = true;
+					}
+				}
+				else
+				{
+					count = 0;
+				}
+
+				if (preKeys[DIK_SPACE] && !keys[DIK_SPACE] && onceflag == true && count <= 20) {  //スペースを長押しない時に攻撃
+					onceflag = false;
+					count = 0;
+					S_push = true;
+				}
+				else {
+					S_push = false;
+				}
+
+				if (L_push == true) {  //長押し判定
+					ball.position.y -= ball.speed;
+					if (ball.position.y == 70) {  //上に移動した時
+						ball.speed -= ball.speed + 180;
+					}
+					else if (ball.position.y == 430) {  //下に移動した時
+						ball.speed -= ball.speed - 180;
+					}
+				}
+
+				if (count == 0) {  //バグ対策
+					L_push = false;
+				}
+
+				// 敵の移動
+
+				if (isEnemyAlive) {
+					enemy.position.x -= enemy.speed;
+				}
+
+				//敵の当たり判定
+
+				if (S_push) {
+					if (isEnemyAlive[0]) {
+						if (isHit(
+							ball.position.x, ball.position.y, playerw, playerh, enemy.position.x,
+							enemy.position.y, enemyw, enemyh, isHittrue)) {
+							if (isEnemyAlive[0] == true) {
+								if (!Novice::IsPlayingAudio(voiceHandle6) || voiceHandle6 == -1) {
+									voiceHandle6 = Novice::PlayAudio(Kill, false, 20.0f);
+								}
+								score += 100;
+								enemy.position.x = 1000.0f;
+								enemy.position.y = 266.0f;
+								isEnemyAlive[0] = false;
+							}
+						}
+					}
+				}
+
+				//リスポーンタイマー
+
+				if (isEnemyAlive[0] == false) {
+					resporntimer--;
+				}
+				if (resporntimer == 0 && isEnemyAlive[0] == false) {
+					resporntimer = 50;
+					isEnemyAlive[0] = true;
+				}
+
+				//曲が変わったら切り替え
+	
+				if (Switchingflag) {
+					if (preKeys[DIK_SPACE]) {
+						Push1flag = true;
+						Switchingflag = false;
+					}
+				}
+
+				//画像スクロール
+
+				bg1X = bg1X - bg_speed;
+				bg2X = bg2X - bg_speed;
+				if (bg1X < -1270 && bg2X < 0) {
+					bg1X = 1270;
+				}
+				if (bg2X < -1270 && bg1X < 0) {
+					bg2X = 1270;
+				}
+			}
+
+			break;
 		case eScene_STAGE_EASY:
 			//マウスカーソル削除
 
@@ -230,6 +421,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			if (Gameflag) {
 				AnimframeCount++;
 				time_count = 0;
+				score = 0;
 				if (AnimframeCount == 60) {
 					AnimCount += 1;
 				}
@@ -372,6 +564,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			if (Gameflag) {
 				AnimframeCount++;
 				time_count = 0;
+				score = 0;
 				if (AnimframeCount == 60) {
 					AnimCount += 1;
 				}
@@ -573,6 +766,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			if (Gameflag) {
 				AnimframeCount++;
 				time_count = 0;
+				score = 0;
 				if (AnimframeCount == 60) {
 					AnimCount += 1;
 				}
@@ -895,6 +1089,56 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			}
 			break;
 		case eScene_SELECT:
+			break;
+		case eScene_TUTORIAL:
+			if (!Push1flag) {
+				Novice::DrawSprite(bg1X, 0, Haikei[0], 1, 1, 0.0f, WHITE);
+				Novice::DrawSprite(bg2X, 0, Haikei[0], 1, 1, 0.0f, WHITE);
+			}
+			if (Push1flag) {
+				Novice::DrawSprite(bg3X, 0, Haikei[1], 1, 1, 0.0f, WHITE);
+				Novice::DrawSprite(bg4X, 0, Haikei[1], 1, 1, 0.0f, WHITE);
+			}
+			Novice::DrawLine(100, 180, 1200, 180, WHITE);
+			Novice::DrawLine(100, 360, 1200, 360, WHITE);
+			Novice::DrawLine(100, 540, 1200, 540, WHITE);
+			Novice::DrawSprite(0, 0, HukidasiUI, 1, 1, 0.0f, WHITE);
+			if (AnimCount == 0) {
+				Novice::DrawSprite(100, -10, TutorialUI[0], 1, 1, 0.0f, WHITE);
+			}
+			if (AnimCount == 1) {
+				Novice::DrawSprite(100, -10, TutorialUI[1], 1, 1, 0.0f, WHITE);
+			}
+			if (AnimCount == 2) {
+				Novice::DrawSprite(100, -10, TutorialUI[2], 1, 1, 0.0f, WHITE);
+			}
+			if (AnimCount == 3) {
+				Novice::DrawSprite(100, -10, TutorialUI[3], 1, 1, 0.0f, WHITE);
+			}
+			if (AnimCount == 4) {
+				Novice::DrawSprite(100, -10, TutorialUI[4], 1, 1, 0.0f, WHITE);
+			}
+			if (AnimCount == 5) {
+				Novice::DrawSprite(100, -10, TutorialUI[5], 1, 1, 0.0f, WHITE);
+			}
+			if (AnimCount == 6) {
+				Novice::DrawSprite(100, -10, TutorialUI[6], 1, 1, 0.0f, WHITE);
+			}
+			if (AnimCount == 7) {
+				Novice::DrawSprite(100, -10, TutorialUI[7], 1, 1, 0.0f, WHITE);
+			}
+			if (AnimCount == 8) {
+				Novice::DrawSprite(100, -10, TutorialUI[8], 1, 1, 0.0f, WHITE);
+			}
+			if (AnimCount == 9) {
+				Novice::DrawSprite(100, -10, TutorialUI[9], 1, 1, 0.0f, WHITE);
+			}
+			Novice::DrawSprite(0, 650, CountUI, 1, 1, 0.0f, WHITE);
+			Novice::DrawSprite((int)pos_x, (int)pos_y, Ebi, 1, 1, 0.0f, WHITE);
+			Novice::DrawSprite(int(ball.position.x), int(ball.position.y), Ebi, 1, 1, 0.0f, WHITE);
+			if (isEnemyAlive[0]) {
+				Novice::DrawSprite(int(enemy.position.x), int(enemy.position.y), Ika, 1, 1, 0.0f, WHITE);
+			}
 			break;
 		case eScene_STAGE_EASY:
 			Novice::DrawSprite(bg1X, 0, Haikei[0], 1, 1, 0.0f, WHITE);
