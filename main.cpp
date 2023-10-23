@@ -51,6 +51,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//スコア
 	int score = 0;
 
+	//カーソル移動
+	int MoveC = 0;
+
 	// スプライトの縦幅
 	float playerw = 64.0f;
 	float enemyw = 64.0f;
@@ -145,6 +148,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Novice::LoadTexture("./Resources/Start5.png"),
 		Novice::LoadTexture("./Resources/Start6.png"),
 	};
+	int Select[3] = {
+		Novice::LoadTexture("./Resources/Select1.png"),
+		Novice::LoadTexture("./Resources/Select2.png"),
+		Novice::LoadTexture("./Resources/Select3.png")
+	};
 	int Arrow = Novice::LoadTexture("./Resources/arrow.png");
 	int Ebi = Novice::LoadTexture("./Resources/ebi.png");
 	int Ika = Novice::LoadTexture("./Resources/ika.png");
@@ -192,6 +200,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				voiceHandle1 = Novice::PlayAudio(GameStart, true, 0.5f);
 			}
 
+			//カーソル移動
+
 			if (keys[DIK_W] && !preKeys[DIK_W] || keys[DIK_UP] && !preKeys[DIK_UP]) {  //↑押したとき
 				Upflag = true;
 				Downflag = false;
@@ -205,7 +215,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			if (keys[DIK_RETURN] && !preKeys[DIK_RETURN]) {  //ENTER押したとき
 				if (Upflag) {
 					Novice::StopAudio(voiceHandle1);
-					scene_no = eScene_TUTORIAL;
+					scene_no = eScene_SELECT;
 					Startflag = false;
 					frameCount = 0;
 					playerAnimCount = 0;
@@ -237,8 +247,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				}
 			}
 
-			break;
-		case eScene_SELECT:
 			break;
 		case eScene_TUTORIAL:
 			//マウスカーソル削除
@@ -305,7 +313,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					AnimCount = 0;
 					enemy.speed = 3.0f;
 					Push1flag = false;
-					scene_no = eScene_STAGE_EASY;
+					scene_no = eScene_SELECT;
 				}
 			}
 
@@ -402,6 +410,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 						Switchingflag = false;
 					}
 				}
+				else {
+					Novice::StopAudio(voiceHandle7);
+				}
 
 				//画像スクロール
 
@@ -413,6 +424,44 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				if (bg2X < -1270 && bg1X < 0) {
 					bg2X = 1270;
 				}
+			}
+
+			break;
+		case eScene_SELECT:
+
+			if (!Novice::IsPlayingAudio(voiceHandle1) || voiceHandle1 == -1) {
+				voiceHandle1 = Novice::PlayAudio(GameStart, true, 0.5f);
+			}
+
+			//カーソル移動
+
+			if (keys[DIK_A] && !preKeys[DIK_A] || keys[DIK_LEFT] && !preKeys[DIK_LEFT]) {  //←押したとき
+				MoveC -= 1;
+			}
+
+			if (keys[DIK_D] && !preKeys[DIK_D] || keys[DIK_RIGHT] && !preKeys[DIK_RIGHT]) {  //→押したとき
+				MoveC += 1;
+			}
+
+			if (keys[DIK_RETURN] && !preKeys[DIK_RETURN]) {  //ENTER押したとき
+				Novice::StopAudio(voiceHandle1);
+				if (MoveC == 0) {
+					scene_no = eScene_STAGE_EASY;
+				}
+				if (MoveC == 1) {
+					scene_no = eScene_STAGE_NORMAL;
+				}
+				if (MoveC == 2) {
+					scene_no = eScene_STAGE_HARD;
+				}
+			}
+
+			//カーソル移動の制限
+			if (MoveC < 0) {
+				MoveC = 0;
+			}
+			if (MoveC > 2) {
+				MoveC = 2;
 			}
 
 			break;
@@ -677,9 +726,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
-							if (!Novice::IsPlayingAudio(voiceHandle7) || voiceHandle7 == -1) {
-								voiceHandle7 = Novice::PlayAudio(Success, false, 0.5f);
-							}
 							Push1flag = true;
 							Switchingflag = false;
 						}
@@ -692,9 +738,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
-							if (!Novice::IsPlayingAudio(voiceHandle7) || voiceHandle7 == -1) {
-								voiceHandle7 = Novice::PlayAudio(Success, false, 0.5f);
-							}
 							Push1flag = false;
 							Switchingflag = false;
 						}
@@ -707,9 +750,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
-							if (!Novice::IsPlayingAudio(voiceHandle7) || voiceHandle7 == -1) {
-								voiceHandle7 = Novice::PlayAudio(Success, false, 0.5f);
-							}
 							Push1flag = true;
 							Switchingflag = false;
 						}
@@ -722,9 +762,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
-							if (!Novice::IsPlayingAudio(voiceHandle7) || voiceHandle7 == -1) {
-								voiceHandle7 = Novice::PlayAudio(Success, false, 0.5f);
-							}
 							Push1flag = false;
 							Switchingflag = false;
 						}
@@ -891,9 +928,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
-							if (!Novice::IsPlayingAudio(voiceHandle7) || voiceHandle7 == -1) {
-								voiceHandle7 = Novice::PlayAudio(Success, false, 0.5f);
-							}
 							Push1flag = true;
 							Switchingflag = false;
 						}
@@ -906,9 +940,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
-							if (!Novice::IsPlayingAudio(voiceHandle7) || voiceHandle7 == -1) {
-								voiceHandle7 = Novice::PlayAudio(Success, false, 0.5f);
-							}
 							Push1flag = false;
 							Push2flag = true;
 							Switchingflag = false;
@@ -922,9 +953,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
-							if (!Novice::IsPlayingAudio(voiceHandle7) || voiceHandle7 == -1) {
-								voiceHandle7 = Novice::PlayAudio(Success, false, 0.5f);
-							}
 							Push1flag = false;
 							Push2flag = false;
 							Switchingflag = false;
@@ -938,9 +966,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
-							if (!Novice::IsPlayingAudio(voiceHandle7) || voiceHandle7 == -1) {
-								voiceHandle7 = Novice::PlayAudio(Success, false, 0.5f);
-							}
 							Push1flag = false;
 							Push2flag = true;
 							Switchingflag = false;
@@ -954,9 +979,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
-							if (!Novice::IsPlayingAudio(voiceHandle7) || voiceHandle7 == -1) {
-								voiceHandle7 = Novice::PlayAudio(Success, false, 0.5f);
-							}
 							Push1flag = false;
 							Push2flag = false;
 							Switchingflag = false;
@@ -970,9 +992,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					Switchingflag = true;
 					if (Switchingflag) {
 						if (preKeys[DIK_SPACE]) {
-							if (!Novice::IsPlayingAudio(voiceHandle7) || voiceHandle7 == -1) {
-								voiceHandle7 = Novice::PlayAudio(Success, false, 0.5f);
-							}
 							Push1flag = true;
 							Push2flag = false;
 							Switchingflag = false;
@@ -1049,7 +1068,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 						Stage_Easy_Clearflag = false;
 						Push1flag = false;
 						Switchingflag = false;
-						scene_no = eScene_STAGE_NORMAL;
+						scene_no = eScene_SELECT;
 					}
 				}
 				if (Stage_Normal_Clearflag) {
@@ -1066,7 +1085,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 						Stage_Normal_Clearflag = false;
 						Push1flag = false;
 						Switchingflag = false;
-						scene_no = eScene_STAGE_HARD;
+						scene_no = eScene_SELECT;
 					}
 				}
 				if (Stage_Hard_Clearflag) {
@@ -1084,7 +1103,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 						Push1flag = false;
 						Push2flag = false;
 						Switchingflag = false;
-						scene_no = eScene_STAGE_HARD;
+						scene_no = eScene_SELECT;
 					}
 				}
 			}
@@ -1124,6 +1143,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			}
 			break;
 		case eScene_SELECT:
+			if (MoveC == 0) {
+				Novice::DrawSprite(0, 0, Select[0], 1, 1, 0.0f, WHITE);
+			}
+			if (MoveC == 1) {
+				Novice::DrawSprite(0, 0, Select[1], 1, 1, 0.0f, WHITE);
+			}
+			if (MoveC == 2) {
+				Novice::DrawSprite(0, 0, Select[2], 1, 1, 0.0f, WHITE);
+			}
 			break;
 		case eScene_TUTORIAL:
 			if (!Push1flag) {
@@ -1215,7 +1243,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Novice::DrawSprite((int)pos_x, (int)pos_y, Ebi, 1, 1, 0.0f, WHITE);
 			Novice::DrawSprite(int(ball.position.x), int(ball.position.y), Ebi, 1, 1, 0.0f, WHITE);
 			if (isEnemyAlive[0] ) {
-				Novice::DrawSprite(int(enemy.position.x), int(enemy.position.y), Maguro, 1, 1, 0.0f, WHITE);
+				Novice::DrawSprite(int(enemy.position.x), int(enemy.position.y) + 50, Maguro, 1, 1, 0.0f, WHITE);
 			}
 			if (Gameflag) {
 				if (AnimCount == 0) {
