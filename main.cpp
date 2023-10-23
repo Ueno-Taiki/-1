@@ -1,7 +1,23 @@
-#include "hit.h"
 #include <Novice.h>
+#include <math.h>
+#include <stdlib.h>
+#include <time.h>
 
 const char kWindowTitle[] = "1143_えびbeats";
+
+int isHit(
+	float playerX,      // 自機のX座標
+	float playerY,      // 自機のY座標
+	float playerWidth,  // 自機の横幅
+	float playerHeight, // 自機の縦幅
+
+	float enemyX,      // 敵のX座標
+	float enemyY,      // 敵のY座標
+	float enemyWidth,  // 敵の横幅
+	float enemyHeight, // 敵の縦幅
+
+	bool flag // フラグ
+);
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -33,6 +49,30 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		float speed;
 	};
 
+	//イージー用敵変数
+	struct EasyEnemy {
+		Vector2 position[100];
+		float radius[100];
+		float speed[100];
+		bool isEenemyAlive[100];
+	};
+
+	//ノーマル用敵変数
+	struct NoumalEnemy {
+		Vector2 position[15];
+		float radius[15];
+		float speed[15];
+		bool isNenemyAlive[15];
+	};
+
+	//ハード用敵変数
+	struct HardEnemy {
+		Vector2 position[15];
+		float radius[15];
+		float speed[15];
+		bool isHenemyAlive[15];
+	};
+
 	//初期値設定
 	Ball ball = {
 		{100.0f, 250.0f, 64.0f, 64.0f},
@@ -44,6 +84,74 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		32.0f,
 		3.0f
 	};
+
+	// イージー用敵変数の初期化
+	EasyEnemy Eenemy = { 0 };
+	srand((unsigned int)time(NULL));
+	int num[100] = { 0 }; // 乱数用変数
+	for (int j = 0; j < 100; j++) {
+		for (int i = 0; i < 100; i++) {
+			Eenemy.position[i].x = { 1000.0f + i * 700.0f };
+			Eenemy.radius[i] = { 64.0f };
+			Eenemy.speed[i] = { 2.0f };
+			Eenemy.isEenemyAlive[i] = true;
+
+			// Y座標用乱数
+			num[i] = rand() % 3;
+			if (num[i] == 0) {
+				Eenemy.position[i].y = { 270.0f };
+			}
+			else if (num[i] == 1) {
+				Eenemy.position[i].y = { 90.0f };
+			}
+			else if (num[i] == 2) {
+				Eenemy.position[i].y = { 450.0f };
+			}
+		}
+	}
+
+	// ノーマル用敵変数の初期化
+	NoumalEnemy Nenemy = { 0 };
+	int noumalnum[100] = { 0 }; // 乱数用変数
+	for (int i = 0; i < 100; i++) {
+		Nenemy.position[i].x = { 1000.0f + i * 600.0f };
+		Nenemy.radius[i] = { 64.0f };
+		Nenemy.speed[i] = { 3.0f };
+		Nenemy.isNenemyAlive[i] = true;
+
+		noumalnum[i] = rand() % 3;
+		if (noumalnum[i] == 0) {
+			Nenemy.position[i].y = { 270.0f };
+		}
+		else if (noumalnum[i] == 1) {
+			Nenemy.position[i].y = { 90.0f };
+		}
+		else if (noumalnum[i] == 2) {
+			Nenemy.position[i].y = { 450.0f };
+		}
+	}
+
+	// ハード用敵変数の初期化
+	HardEnemy Henemy = { 0 };
+	int hardnum[100] = { 0 }; // 乱数用変数
+
+	for (int i = 0; i < 100; i++) {
+		Henemy.position[i].x = { 1000.0f + i * 450.0f };
+		Henemy.radius[i] = { 64.0f };
+		Henemy.speed[i] = { 5.0f };
+		Henemy.isHenemyAlive[i] = true;
+
+		hardnum[i] = rand() % 3;
+		if (hardnum[i] == 0) {
+			Henemy.position[i].y = { 270.0f };
+		}
+		else if (hardnum[i] == 1) {
+			Henemy.position[i].y = { 90.0f };
+		}
+		else if (hardnum[i] == 2) {
+			Henemy.position[i].y = { 450.0f };
+		}
+	}
 
 	//リスポーンタイマー
 	int resporntimer = 50;
@@ -113,9 +221,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	bool onceflag = false;  //押されたか用フラグ
 	bool L_push = false;  //長押しフラグ
 	bool S_push = false;  //短押しフラグ 
-	bool isEnemyAlive[2] = { true, false };  //敵生存フラグ
+	bool isEnemyAlive = true;  //敵生存フラグ
 	bool isHittrue = false;  //確認用変数
 	bool Clearflag = false;  //クリアフラグ
+	bool isddd = false;
 
 	//画像切り替え
 	enum Scene {
@@ -233,7 +342,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			if (keys[DIK_RETURN] && !preKeys[DIK_RETURN]) {  //ENTER押したとき
 				if (Upflag) {
 					Novice::StopAudio(voiceHandle1);
-					scene_no = eScene_SELECT;
+					scene_no = eScene_TUTORIAL;
 					Startflag = false;
 					frameCount = 0;
 					playerAnimCount = 0;
@@ -390,18 +499,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				//敵の当たり判定
 
 				if (S_push) {
-					if (isEnemyAlive[0]) {
+					if (isEnemyAlive) {
 						if (isHit(
 							ball.position.x, ball.position.y, playerw, playerh, enemy.position.x,
 							enemy.position.y, enemyw, enemyh, isHittrue)) {
-							if (isEnemyAlive[0] == true) {
+							if (isEnemyAlive == true) {
 								if (!Novice::IsPlayingAudio(voiceHandle6) || voiceHandle6 == -1) {
 									voiceHandle6 = Novice::PlayAudio(Kill, false, 20.0f);
 								}
 								score += 100;
 								enemy.position.x = 1000.0f;
 								enemy.position.y = 266.0f;
-								isEnemyAlive[0] = false;
+								isEnemyAlive = false;
 							}
 						}
 					}
@@ -409,12 +518,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 				//リスポーンタイマー
 
-				if (isEnemyAlive[0] == false) {
+				if (isEnemyAlive == false) {
 					resporntimer--;
 				}
-				if (resporntimer == 0 && isEnemyAlive[0] == false) {
+				if (resporntimer == 0 && isEnemyAlive == false) {
 					resporntimer = 50;
-					isEnemyAlive[0] = true;
+					isEnemyAlive = true;
 				}
 
 				//曲が変わったら切り替え
@@ -561,38 +670,30 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 				// 敵の移動
 
-				if (isEnemyAlive) {
-					enemy.position.x -= enemy.speed;
+				for (int j = 0; j < 100; j++) {
+					if (Eenemy.isEenemyAlive[j] == true) {
+
+						Eenemy.position[j].x -= Eenemy.speed[j];
+					}
 				}
 
 				//敵の当たり判定
 
 				if (S_push) {
-					if (isEnemyAlive[0]) {
+
+					for (int j = 0; j < 100; j++) {
 						if (isHit(
-							ball.position.x, ball.position.y, playerw, playerh, enemy.position.x,
-							enemy.position.y, enemyw, enemyh, isHittrue)) {
-							if (isEnemyAlive[0] == true) {
+							ball.position.x, ball.position.y, ball.radius, ball.radius,
+							Eenemy.position[j].x, Eenemy.position[j].y, Eenemy.radius[j],
+							Eenemy.radius[j], isddd)) {
+							if (Eenemy.isEenemyAlive[j] == true) {
 								if (!Novice::IsPlayingAudio(voiceHandle6) || voiceHandle6 == -1) {
 									voiceHandle6 = Novice::PlayAudio(Kill, false, 20.0f);
 								}
-								score += 100;
-								enemy.position.x = 1000.0f;
-								enemy.position.y = 266.0f;
-								isEnemyAlive[0] = false;
 							}
+							Eenemy.isEenemyAlive[j] = false;
 						}
 					}
-				}
-
-				//リスポーンタイマー
-
-				if (isEnemyAlive[0] == false) {
-					resporntimer--;
-				}
-				if (resporntimer == 0 && isEnemyAlive[0] == false) {
-					resporntimer = 50;
-					isEnemyAlive[0] = true;
 				}
 
 				//カウントダウン
@@ -702,38 +803,30 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 				// 敵の移動
 
-				if (isEnemyAlive) {
-					enemy.position.x -= enemy.speed;
+				for (int j = 0; j < 100; j++) {
+					if (Eenemy.isEenemyAlive[j] == true) {
+
+						Eenemy.position[j].x -= Eenemy.speed[j];
+					}
 				}
 
 				//敵の当たり判定
 
 				if (S_push) {
-					if (isEnemyAlive[0]) {
+
+					for (int j = 0; j < 100; j++) {
 						if (isHit(
-							ball.position.x, ball.position.y, playerw, playerh, enemy.position.x,
-							enemy.position.y, enemyw, enemyh, isHittrue)) {
-							if (isEnemyAlive[0] == true) {
+							ball.position.x, ball.position.y, ball.radius, ball.radius,
+							Nenemy.position[j].x, Nenemy.position[j].y, Nenemy.radius[j],
+							Nenemy.radius[j], isddd)) {
+							if (Nenemy.isNenemyAlive[j] == true) {
 								if (!Novice::IsPlayingAudio(voiceHandle6) || voiceHandle6 == -1) {
 									voiceHandle6 = Novice::PlayAudio(Kill, false, 20.0f);
 								}
-								score += 100;
-								enemy.position.x = 1000.0f;
-								enemy.position.y = 266.0f;
-								isEnemyAlive[0] = false;
 							}
+							Nenemy.isNenemyAlive[j] = false;
 						}
 					}
-				}
-
-				//リスポーンタイマー
-
-				if (isEnemyAlive[0] == false) {
-					resporntimer--;
-				}
-				if (resporntimer == 0 && isEnemyAlive[0] == false) {
-					resporntimer = 50;
-					isEnemyAlive[0] = true;
 				}
 
 				//曲が変わったら切り替え
@@ -904,38 +997,30 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 				// 敵の移動
 
-				if (isEnemyAlive) {
-					enemy.position.x -= enemy.speed;
+				for (int j = 0; j < 100; j++) {
+					if (Henemy.isHenemyAlive[j] == true) {
+
+						Henemy.position[j].x -= Henemy.speed[j];
+					}
 				}
 
 				//敵の当たり判定
 
 				if (S_push) {
-					if (isEnemyAlive[0]) {
+
+					for (int j = 0; j < 100; j++) {
 						if (isHit(
-							ball.position.x, ball.position.y, playerw, playerh, enemy.position.x,
-							enemy.position.y, enemyw, enemyh, isHittrue)) {
-							if (isEnemyAlive[0] == true) {
+							ball.position.x, ball.position.y, ball.radius, ball.radius,
+							Henemy.position[j].x, Henemy.position[j].y, Henemy.radius[j],
+							Henemy.radius[j], isddd)) {
+							if (Henemy.isHenemyAlive[j] == true) {
 								if (!Novice::IsPlayingAudio(voiceHandle6) || voiceHandle6 == -1) {
 									voiceHandle6 = Novice::PlayAudio(Kill, false, 20.0f);
 								}
-								score += 100;
-								enemy.position.x = 1000.0f;
-								enemy.position.y = 266.0f;
-								isEnemyAlive[0] = false;
 							}
+							Henemy.isHenemyAlive[j] = false;
 						}
 					}
-				}
-
-				//リスポーンタイマー
-
-				if (isEnemyAlive[0] == false) {
-					resporntimer--;
-				}
-				if (resporntimer == 0 && isEnemyAlive[0] == false) {
-					resporntimer = 50;
-					isEnemyAlive[0] = true;
 				}
 
 				//曲が変わったら切り替え
@@ -1083,7 +1168,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					if (keys[DIK_R]) {
 						Gameflag = true;
 						Clearflag = false;
-						isEnemyAlive[0] = true;
+						isEnemyAlive = true;
 						Stage_Easy_Clearflag = false;
 						Push1flag = false;
 						Switchingflag = false;
@@ -1100,7 +1185,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					time_AnimCount = 0;
 					if (keys[DIK_R]) {
 						Gameflag = true;
-						isEnemyAlive[0] = true;
+						isEnemyAlive = true;
 						Clearflag = false;
 						Stage_Normal_Clearflag = false;
 						Push1flag = false;
@@ -1118,7 +1203,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					time_AnimCount = 0;
 					if (keys[DIK_R]) {
 						Gameflag = true;
-						isEnemyAlive[0] = true;
+						isEnemyAlive = true;
 						Clearflag = false;
 						Stage_Hard_Clearflag = false;
 						Push1flag = false;
@@ -1220,7 +1305,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Novice::DrawSprite(0, 650, CountUI, 1, 1, 0.0f, WHITE);
 			Novice::DrawSprite((int)pos_x, (int)pos_y, Ebi, 1, 1, 0.0f, WHITE);
 			Novice::DrawSprite(int(ball.position.x), int(ball.position.y), Ebi, 1, 1, 0.0f, WHITE);
-			if (isEnemyAlive[0]) {
+			if (Eenemy.isEenemyAlive) {
 				Novice::DrawSprite(int(enemy.position.x), int(enemy.position.y), Ika, 1, 1, 0.0f, WHITE);
 			}
 			break;
@@ -1233,8 +1318,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Novice::DrawSprite(0, 650, CountUI, 1, 1, 0.0f, WHITE);
 			Novice::DrawSprite((int)pos_x, (int)pos_y, Ebi, 1, 1, 0.0f, WHITE);
 			Novice::DrawSprite(int(ball.position.x), int(ball.position.y), Ebi, 1, 1, 0.0f, WHITE);
-			if (isEnemyAlive[0]) {
-				Novice::DrawSprite(int(enemy.position.x), int(enemy.position.y), Ika, 1, 1, 0.0f, WHITE);
+			for (int i = 0; i < 100; i++) {
+				if (Eenemy.isEenemyAlive[i] == true) {
+					Novice::DrawSprite(int(Eenemy.position[i].x), int(Eenemy.position[i].y), Ika, 1, 1, 0.0f,WHITE);
+				}
 			}
 			if (Gameflag) {
 				if (AnimCount == 0) {
@@ -1263,8 +1350,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Novice::DrawSprite(0, 650, CountUI, 1, 1, 0.0f, WHITE);
 			Novice::DrawSprite((int)pos_x, (int)pos_y, Ebi, 1, 1, 0.0f, WHITE);
 			Novice::DrawSprite(int(ball.position.x), int(ball.position.y), Ebi, 1, 1, 0.0f, WHITE);
-			if (isEnemyAlive[0] ) {
-				Novice::DrawSprite(int(enemy.position.x), int(enemy.position.y) + 50, Maguro, 1, 1, 0.0f, WHITE);
+			for (int i = 0; i < 100; i++) {
+				if (Eenemy.isEenemyAlive[i] == true) {
+					Novice::DrawSprite(int(Eenemy.position[i].x), int(Eenemy.position[i].y), Maguro, 1, 1, 0.0f,WHITE);
+				}
 			}
 			if (Gameflag) {
 				if (AnimCount == 0) {
@@ -1303,8 +1392,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Novice::DrawSprite(0, 650, CountUI, 1, 1, 0.0f, WHITE);
 			Novice::DrawSprite((int)pos_x, (int)pos_y, Ebi, 1, 1, 0.0f, WHITE);
 			Novice::DrawSprite(int(ball.position.x), int(ball.position.y), Ebi, 1, 1, 0.0f, WHITE);
-			if (isEnemyAlive[0]) {
-				Novice::DrawSprite(int(enemy.position.x), int(enemy.position.y), Ika, 1, 1, 0.0f, WHITE);
+			for (int i = 0; i < 100; i++) {
+				if (Eenemy.isEenemyAlive[i] == true) {
+					Novice::DrawSprite(int(Eenemy.position[i].x), int(Eenemy.position[i].y), Ika, 1, 1, 0.0f, WHITE);
+				}
 			}
 			if (Gameflag) {
 				if (AnimCount == 0) {
@@ -1348,4 +1439,30 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ライブラリの終了
 	Novice::Finalize();
 	return 0;
+}
+
+// 当たり判定用関数
+int isHit(
+	float playerX,      // 自機のX座標
+	float playerY,      // 自機のY座標
+	float playerWidth,  // 自機の横幅
+	float playerHeight, // 自機の縦幅
+
+	float enemyX,      // 敵のX座標
+	float enemyY,      // 敵のY座標
+	float enemyWidth,  // 敵の横幅
+	float enemyHeight, // 敵の縦幅
+	bool flag          // フラグ
+) {
+
+	if (enemyX + (-enemyWidth / 2.0f) < playerX + (playerWidth / 2.0f) &&
+		playerX + (-playerWidth / 2.0f) < enemyX + (enemyWidth / 2.0f) &&
+		enemyY + (-enemyHeight / 2.0f) < playerY + (enemyHeight / 2.0f) &&
+		playerY + (-playerHeight / 2.0f) < enemyY + (enemyHeight / 2.0f)) {
+		if (flag == false) {
+
+			flag = true;
+		}
+	}
+	return flag;
 }
