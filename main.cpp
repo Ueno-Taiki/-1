@@ -48,6 +48,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//リスポーンタイマー
 	int resporntimer = 50;
 
+	//スコア
+	int score = 0;
+
 	// スプライトの縦幅
 	float playerw = 64.0f;
 	float enemyw = 64.0f;
@@ -309,6 +312,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 								if (!Novice::IsPlayingAudio(voiceHandle6) || voiceHandle6 == -1) {
 									voiceHandle6 = Novice::PlayAudio(Kill, false, 20.0f);
 								}
+								score += 100;
 								enemy.position.x = 1000.0f;
 								enemy.position.y = 266.0f;
 								isEnemyAlive[0] = false;
@@ -448,6 +452,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 								if (!Novice::IsPlayingAudio(voiceHandle6) || voiceHandle6 == -1) {
 									voiceHandle6 = Novice::PlayAudio(Kill, false, 20.0f);
 								}
+								score += 100;
 								enemy.position.x = 1000.0f;
 								enemy.position.y = 266.0f;
 								isEnemyAlive[0] = false;
@@ -648,6 +653,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 								if (!Novice::IsPlayingAudio(voiceHandle6) || voiceHandle6 == -1) {
 									voiceHandle6 = Novice::PlayAudio(Kill, false, 20.0f);
 								}
+								score += 100;
 								enemy.position.x = 1000.0f;
 								enemy.position.y = 266.0f;
 								isEnemyAlive[0] = false;
