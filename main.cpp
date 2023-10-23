@@ -1,5 +1,5 @@
+#include "hit.h"
 #include <Novice.h>
-#include <math.h>
 
 const char kWindowTitle[] = "1143_えびbeats";
 
@@ -45,6 +45,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		3.0f
 	};
 
+	//リスポーンタイマー
+	int resporntimer = 50;
+
+	// スプライトの縦幅
+	float playerw = 64.0f;
+	float enemyw = 64.0f;
+
+	// スプライト横幅
+	float playerh = 64.0f;
+	float enemyh = 64.0f;
+
 	//モーション
 	int frameCount = 0;
 	int playerAnimCount = 0;
@@ -70,9 +81,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	int AnimCount = 0;
 
 	//フラグ管理
-	bool Upflag = true;
-	bool Downflag = false;
-	bool Startflag = true;
+	bool Upflag = true;  //アップフラグ
+	bool Downflag = false;  //ダウンフラグ
+	bool Startflag = true;  //スタートフラグ
 	bool Gameflag = true;  //ゲームスタート用フラグ
 	bool Stage_Easyflag = false;  //難易度EASYフラグ
 	bool Stage_Easy_Clearflag = false;  //難易度EASYクリアフラグ
@@ -85,8 +96,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	bool Push2flag = false;  //押した2判定用
 	bool onceflag = false;  //押されたか用フラグ
 	bool L_push = false;  //長押しフラグ
-	bool S_push = false;  //短押しフラグ
-	bool isEnemyAlive = true;  //敵生存フラグ
+	bool S_push = false;  //短押しフラグ 
+	bool isEnemyAlive[2] = { true, false };  //敵生存フラグ
+	bool isHittrue = false;  //確認用変数
 	bool Clearflag = false;  //クリアフラグ
 
 	//画像切り替え
@@ -157,12 +169,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				voiceHandle1 = Novice::PlayAudio(GameStart, true, 0.5f);
 			}
 
-			if (keys[DIK_UP] && !preKeys[DIK_UP]) {  //↑押したとき
+			if (keys[DIK_W] && !preKeys[DIK_W] || keys[DIK_UP] && !preKeys[DIK_UP]) {  //↑押したとき
 				Upflag = true;
 				Downflag = false;
 			}
 
-			if (keys[DIK_DOWN] && !preKeys[DIK_DOWN]) {  //↓押したとき
+			if (keys[DIK_S] && !preKeys[DIK_S] || keys[DIK_DOWN] && !preKeys[DIK_DOWN]) {  //↓押したとき
 				Upflag = false;
 				Downflag = true;
 			}
@@ -289,16 +301,30 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				//敵の当たり判定
 
 				if (S_push) {
-					if (isEnemyAlive) {
-						if ((ball.radius / 2 + enemy.radius / 2 ) * (ball.radius / 2 + enemy.radius / 2) > ((ball.position.x - 18) - (enemy.position.x + 18)) * ((ball.position.x - 18) - (enemy.position.x + 18)) + ((ball.position.y - 18) - (enemy.position.y + 18)) + ((ball.position.y - 18) - (enemy.position.y + 18))) {
-							if (isEnemyAlive == true) {
+					if (isEnemyAlive[0]) {
+						if (isHit(
+							ball.position.x, ball.position.y, playerw, playerh, enemy.position.x,
+							enemy.position.y, enemyw, enemyh, isHittrue)) {
+							if (isEnemyAlive[0] == true) {
 								if (!Novice::IsPlayingAudio(voiceHandle6) || voiceHandle6 == -1) {
 									voiceHandle6 = Novice::PlayAudio(Kill, false, 20.0f);
 								}
-								isEnemyAlive = false;
+								enemy.position.x = 1000.0f;
+								enemy.position.y = 266.0f;
+								isEnemyAlive[0] = false;
 							}
 						}
 					}
+				}
+
+				//リスポーンタイマー
+
+				if (isEnemyAlive[0] == false) {
+					resporntimer--;
+				}
+				if (resporntimer == 0 && isEnemyAlive[0] == false) {
+					resporntimer = 50;
+					isEnemyAlive[0] = true;
 				}
 
 				//カウントダウン
@@ -414,16 +440,30 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				//敵の当たり判定
 
 				if (S_push) {
-					if (isEnemyAlive) {
-						if ((ball.radius / 2 + enemy.radius / 2) * (ball.radius / 2 + enemy.radius / 2) > ((ball.position.x - 18) - (enemy.position.x + 18)) * ((ball.position.x - 18) - (enemy.position.x + 18)) + ((ball.position.y - 18) - (enemy.position.y + 18)) + ((ball.position.y - 18) - (enemy.position.y + 18))) {
-							if (isEnemyAlive == true) {
+					if (isEnemyAlive[0]) {
+						if (isHit(
+							ball.position.x, ball.position.y, playerw, playerh, enemy.position.x,
+							enemy.position.y, enemyw, enemyh, isHittrue)) {
+							if (isEnemyAlive[0] == true) {
 								if (!Novice::IsPlayingAudio(voiceHandle6) || voiceHandle6 == -1) {
 									voiceHandle6 = Novice::PlayAudio(Kill, false, 20.0f);
 								}
-								isEnemyAlive = false;
+								enemy.position.x = 1000.0f;
+								enemy.position.y = 266.0f;
+								isEnemyAlive[0] = false;
 							}
 						}
 					}
+				}
+
+				//リスポーンタイマー
+
+				if (isEnemyAlive[0] == false) {
+					resporntimer--;
+				}
+				if (resporntimer == 0 && isEnemyAlive[0] == false) {
+					resporntimer = 50;
+					isEnemyAlive[0] = true;
 				}
 
 				//曲が変わったら切り替え
@@ -600,16 +640,30 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				//敵の当たり判定
 
 				if (S_push) {
-					if (isEnemyAlive) {
-						if ((ball.radius / 2 + enemy.radius / 2) * (ball.radius / 2 + enemy.radius / 2) > ((ball.position.x - 18) - (enemy.position.x + 18)) * ((ball.position.x - 18) - (enemy.position.x + 18)) + ((ball.position.y - 18) - (enemy.position.y + 18)) + ((ball.position.y - 18) - (enemy.position.y + 18))) {
-							if (isEnemyAlive == true) {
+					if (isEnemyAlive[0]) {
+						if (isHit(
+							ball.position.x, ball.position.y, playerw, playerh, enemy.position.x,
+							enemy.position.y, enemyw, enemyh, isHittrue)) {
+							if (isEnemyAlive[0] == true) {
 								if (!Novice::IsPlayingAudio(voiceHandle6) || voiceHandle6 == -1) {
 									voiceHandle6 = Novice::PlayAudio(Kill, false, 20.0f);
 								}
-								isEnemyAlive = false;
+								enemy.position.x = 1000.0f;
+								enemy.position.y = 266.0f;
+								isEnemyAlive[0] = false;
 							}
 						}
 					}
+				}
+
+				//リスポーンタイマー
+
+				if (isEnemyAlive[0] == false) {
+					resporntimer--;
+				}
+				if (resporntimer == 0 && isEnemyAlive[0] == false) {
+					resporntimer = 50;
+					isEnemyAlive[0] = true;
 				}
 
 				//曲が変わったら切り替え
@@ -756,7 +810,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					if (keys[DIK_R]) {
 						Gameflag = true;
 						Clearflag = false;
-						isEnemyAlive = true;
+						isEnemyAlive[0] = true;
 						Stage_Easy_Clearflag = false;
 						Push1flag = false;
 						Switchingflag = false;
@@ -772,7 +826,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					AnimframeCount = 0;
 					if (keys[DIK_R]) {
 						Gameflag = true;
-						isEnemyAlive = true;
+						isEnemyAlive[0] = true;
 						Clearflag = false;
 						Stage_Normal_Clearflag = false;
 						Push1flag = false;
@@ -789,7 +843,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					AnimframeCount = 0;
 					if (keys[DIK_R]) {
 						Gameflag = true;
-						isEnemyAlive = true;
+						isEnemyAlive[0] = true;
 						Clearflag = false;
 						Stage_Hard_Clearflag = false;
 						Push1flag = false;
@@ -826,12 +880,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			}
 			if (playerAnimCount == 5) {
 				Novice::DrawSprite(0, 0, Start[5], 1, 1, 0.0f, WHITE);
-			}
-			if (Upflag) {
-				Novice::DrawSprite(550, 450, Arrow, 1, 1, 0.0f, WHITE);
-			}
-			if (Downflag) {
-				Novice::DrawSprite(550, 580, Arrow, 1, 1, 0.0f, WHITE);
+				if (Upflag) {
+					Novice::DrawSprite(550, 450, Arrow, 1, 1, 0.0f, WHITE);
+				}
+				if (Downflag) {
+					Novice::DrawSprite(550, 580, Arrow, 1, 1, 0.0f, WHITE);
+				}
 			}
 			break;
 		case eScene_SELECT:
@@ -845,7 +899,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Novice::DrawSprite(0, 650, CountUI, 1, 1, 0.0f, WHITE);
 			Novice::DrawSprite((int)pos_x, (int)pos_y, Ebi, 1, 1, 0.0f, WHITE);
 			Novice::DrawSprite(int(ball.position.x), int(ball.position.y), Ebi, 1, 1, 0.0f, WHITE);
-			if (isEnemyAlive) {
+			if (isEnemyAlive[0]) {
 				Novice::DrawSprite(int(enemy.position.x), int(enemy.position.y), Ika, 1, 1, 0.0f, WHITE);
 			}
 			if (Gameflag) {
@@ -875,7 +929,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Novice::DrawSprite(0, 650, CountUI, 1, 1, 0.0f, WHITE);
 			Novice::DrawSprite((int)pos_x, (int)pos_y, Ebi, 1, 1, 0.0f, WHITE);
 			Novice::DrawSprite(int(ball.position.x), int(ball.position.y), Ebi, 1, 1, 0.0f, WHITE);
-			if (isEnemyAlive) {
+			if (isEnemyAlive[0] ) {
 				Novice::DrawSprite(int(enemy.position.x), int(enemy.position.y), Maguro, 1, 1, 0.0f, WHITE);
 			}
 			if (Gameflag) {
@@ -915,7 +969,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Novice::DrawSprite(0, 650, CountUI, 1, 1, 0.0f, WHITE);
 			Novice::DrawSprite((int)pos_x, (int)pos_y, Ebi, 1, 1, 0.0f, WHITE);
 			Novice::DrawSprite(int(ball.position.x), int(ball.position.y), Ebi, 1, 1, 0.0f, WHITE);
-			if (isEnemyAlive) {
+			if (isEnemyAlive[0]) {
 				Novice::DrawSprite(int(enemy.position.x), int(enemy.position.y), Ika, 1, 1, 0.0f, WHITE);
 			}
 			if (Gameflag) {
