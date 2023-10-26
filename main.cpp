@@ -84,13 +84,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//リスポーンタイマー
 	int resporntimer = 50;
 
-	//スコア
 	int score = 0;
 
-	//数字
-	int kazu = 65535;
+	//スコア
+	int kazu = 12345;
 	int waru_kazu = 10000;
-	int x = 580, y = 400;
+	int x = 550, y = 450;
 	int keta = 0;
 
 	//カーソル移動
@@ -200,6 +199,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	int Arrow = Novice::LoadTexture("./Resources/arrow.png");
 	int Ebi = Novice::LoadTexture("./Resources/ebi.png");
 	int Ika = Novice::LoadTexture("./Resources/ika.png");
+	int Same = Novice::LoadTexture("./Resources/same.png");
 	int Maguro = Novice::LoadTexture("./Resources/maguro.png");
 	int Haikei[3] = {
 		Novice::LoadTexture("./Resources/Haikei1.png"),
@@ -559,7 +559,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			if (Gameflag) {
 				AnimframeCount++;
 				time_count = 0;
-				score = 0;
 				if (AnimframeCount == 60) {
 					AnimCount += 1;
 				}
@@ -573,6 +572,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//難易度簡単
 
 			if (Stage_Easyflag) {
+
+				if (preKeys[DIK_P] == 0 && keys[DIK_P] != 0) {
+					scene_no = eScene_CLEAR;
+				}
 				
 				//時間制限
 
@@ -627,7 +630,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 				// 敵の移動
 
-				for (int j = 0; j < 30; j++) {
+				for (int j = 0; j < 40; j++) {
 					if (Eenemy.isEenemyAlive[j] == true) {
 
 						Eenemy.position[j].x -= Eenemy.speed[j];
@@ -638,7 +641,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 				if (S_push) {
 
-					for (int j = 0; j < 30; j++) {
+					for (int j = 0; j < 40; j++) {
 						if (isHit(
 							ball.position.x, ball.position.y, ball.radius, ball.radius,
 							Eenemy.position[j].x, Eenemy.position[j].y, Eenemy.radius[j],
@@ -694,8 +697,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			if (Gameflag) {
 				AnimframeCount++;
-				time_count = 0;
-				score = 0;
+				time_count = 0
+					;
 				if (AnimframeCount == 60) {
 					AnimCount += 1;
 				}
@@ -890,7 +893,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			if (Gameflag) {
 				AnimframeCount++;
 				time_count = 0;
-				score = 0;
 				if (AnimframeCount == 60) {
 					AnimCount += 1;
 				}
@@ -1120,13 +1122,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				if (Stage_Easy_Clearflag) {
 					ball.position.x = 100.0f;
 					ball.position.y = 250.0f;
-					enemy.position.x = 1000.0f;
-					enemy.position.y = 270.0f;
+					num[0] = { 0 };
+					for (int j = 0; j < 40; j++) {
+						for (int i = 0; i < 40; i++) {
+							Eenemy.position[i].x = { 1000.0f + i * 600.0f };
+						}
+					}
 					pos_x = 1200.0f;
 					AnimframeCount = 0;
 					time_AnimCount = 0;
-					num[0] = 0;
-					score = 0;
 					if (keys[DIK_R]) {
 						Gameflag = true;
 						Clearflag = false;
@@ -1134,6 +1138,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 						Stage_Easy_Clearflag = false;
 						Push1flag = false;
 						Switchingflag = false;
+						score = 0;
 						scene_no = eScene_SELECT;
 					}
 				}
@@ -1145,8 +1150,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					pos_x = 1200.0f;
 					AnimframeCount = 0;
 					time_AnimCount = 0;
-					num[0] = 0;
-					score = 0;
 					if (keys[DIK_R]) {
 						Gameflag = true;
 						isEnemyAlive = true;
@@ -1154,6 +1157,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 						Stage_Normal_Clearflag = false;
 						Push1flag = false;
 						Switchingflag = false;
+						score = 0;
 						scene_no = eScene_SELECT;
 					}
 				}
@@ -1165,8 +1169,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					pos_x = 1200.0f;
 					AnimframeCount = 0;
 					time_AnimCount = 0;
-					num[0] = 0;
-					score = 0;
 					if (keys[DIK_R]) {
 						Gameflag = true;
 						isEnemyAlive = true;
@@ -1175,6 +1177,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 						Push1flag = false;
 						Push2flag = false;
 						Switchingflag = false;
+						score = 0;
 						scene_no = eScene_SELECT;
 					}
 				}
@@ -1284,7 +1287,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Novice::DrawSprite(0, 650, CountUI, 1, 1, 0.0f, WHITE);
 			Novice::DrawSprite((int)pos_x, (int)pos_y, Ebi, 1, 1, 0.0f, WHITE);
 			Novice::DrawSprite(int(ball.position.x), int(ball.position.y), Ebi, 1, 1, 0.0f, WHITE);
-			for (int i = 0; i < 30; i++) {
+			for (int i = 0; i < 40; i++) {
 				if (Eenemy.isEenemyAlive[i] == true) {
 					Novice::DrawSprite(int(Eenemy.position[i].x), int(Eenemy.position[i].y), Ika, 1, 1, 0.0f,WHITE);
 				}
@@ -1360,7 +1363,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			Novice::DrawSprite(int(ball.position.x), int(ball.position.y), Ebi, 1, 1, 0.0f, WHITE);
 			for (int i = 0; i < 200; i++) {
 				if (Eenemy.isEenemyAlive[i] == true) {
-					Novice::DrawSprite(int(Eenemy.position[i].x), int(Eenemy.position[i].y), Ika, 1, 1, 0.0f, WHITE);
+					Novice::DrawSprite(int(Eenemy.position[i].x), int(Eenemy.position[i].y) + 50, Same, 1, 1, 0.0f, WHITE);
 				}
 			}
 			if (Gameflag) {
@@ -1384,8 +1387,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				kazu = kazu - waru_kazu * ans;
 				waru_kazu = waru_kazu / 10;
 			}
-			if (kazu == 0) {
-				kazu = score;
+			if (score == 0) {
+				kazu = 12345;
 				waru_kazu = 10000;
 				keta = 0;
 			}
